@@ -307,11 +307,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HexPrefab: {fileID: 4826415425860855482, guid: 4c2469ba8d1d9674f83a3e0a31ff5452,
     type: 3}
-  HexMaterials:
-  - {fileID: 2100000, guid: 7af21c895385353429e263c700f727aa, type: 2}
-  - {fileID: 2100000, guid: c9af90876dc7f5746814c93a00c50dfd, type: 2}
-  - {fileID: 2100000, guid: 680181de79eed984fad2cb91736f1eaa, type: 2}
-  - {fileID: 2100000, guid: d12e34b4ed564394b99a6d663a632688, type: 2}
+  MeshWater: {fileID: 4300000, guid: 296f4518ab1b2eb42916ff953aa13a32, type: 3}
+  MeshFlat: {fileID: 4300000, guid: 296f4518ab1b2eb42916ff953aa13a32, type: 3}
+  MeshHill: {fileID: 4300000, guid: 296f4518ab1b2eb42916ff953aa13a32, type: 3}
+  MeshMountain: {fileID: 4300000, guid: 296f4518ab1b2eb42916ff953aa13a32, type: 3}
+  MatOcean: {fileID: 2100000, guid: d12e34b4ed564394b99a6d663a632688, type: 2}
+  MatPlains: {fileID: 2100000, guid: 680181de79eed984fad2cb91736f1eaa, type: 2}
+  MatGrassland: {fileID: 2100000, guid: 7af21c895385353429e263c700f727aa, type: 2}
+  MatMountain: {fileID: 2100000, guid: c9af90876dc7f5746814c93a00c50dfd, type: 2}
 --- !u!4 &657565038
 Transform:
   m_ObjectHideFlags: 0

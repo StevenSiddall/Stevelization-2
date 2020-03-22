@@ -25,6 +25,8 @@ public class HexMap : MonoBehaviour {
     public readonly int numRows = 20;
 
     virtual public void GenerateMap() {
+
+        // Generate a map filled with ocean
         for(int col = 0; col < numCols; col++) {
             for(int row = 0; row < numRows; row++) {
                 Hex h = new Hex(col, row);
@@ -45,7 +47,10 @@ public class HexMap : MonoBehaviour {
                 hexGO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", row, col);
 
                 MeshRenderer mr = hexGO.GetComponentInChildren<MeshRenderer>();
-                mr.material = HexMaterials[Random.Range(0, HexMaterials.Length)];
+                mr.material = MatOcean;
+
+                MeshFilter mf = hexGO.GetComponentInChildren<MeshFilter>();
+                mf.mesh = MeshWater;
             }
         }
     }
