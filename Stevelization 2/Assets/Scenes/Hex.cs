@@ -19,6 +19,10 @@ public class Hex {
     public readonly int R;
     public readonly int S;
 
+    //terrain data for terrain generation + weather effects
+    public float elevation;
+    public float moisture;
+
     public Hex(int q, int r) {
         this.Q = q;
         this.R = r;
@@ -45,5 +49,12 @@ public class Hex {
 
         pos.x -= numWidthsFromCam * mapWidth;
         return pos;
+    }
+
+    public static float distance(Hex a, Hex b) {
+        //FIXME: wrapping
+        return Mathf.Max(Mathf.Abs(a.Q - b.Q),
+                         Mathf.Abs(a.R - b.R),
+                         Mathf.Abs(a.S - b.S));
     }
 }

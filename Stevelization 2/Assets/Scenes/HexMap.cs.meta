@@ -3,7 +3,17 @@ guid: 081e348d86414e64aba36cf323c262c6
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - HexPrefab: {fileID: 4826415425860855482, guid: 4c2469ba8d1d9674f83a3e0a31ff5452,
+      type: 3}
+  - MeshWater: {instanceID: 0}
+  - MeshFlat: {instanceID: 0}
+  - MeshHill: {instanceID: 0}
+  - MeshMountain: {instanceID: 0}
+  - MatOcean: {instanceID: 0}
+  - MatPlains: {instanceID: 0}
+  - MatGrassland: {instanceID: 0}
+  - MatMountain: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
