@@ -19,11 +19,14 @@ public class Hex {
     public readonly int R;
     public readonly int S;
 
+    public readonly HexMap hexMap;
+
     //terrain data for terrain generation + weather effects
     public float elevation;
     public float moisture;
 
-    public Hex(int q, int r) {
+    public Hex(HexMap hexmap, int q, int r) {
+        this.hexMap = hexmap;
         this.Q = q;
         this.R = r;
         this.S = -(q + r);
@@ -52,9 +55,14 @@ public class Hex {
     }
 
     public static float distance(Hex a, Hex b) {
-        //FIXME: wrapping
-        return Mathf.Max(Mathf.Abs(a.Q - b.Q),
+        int dQ = Mathf.Min(Mathf.Abs(a.Q - b.Q),
+                            Mathf.Abs(a.hexMap.numCols - Mathf.Abs(a.Q - b.Q)));
+
+        int dS = Mathf.Min(Mathf.Abs(a.S - b.S),
+                            Mathf.Abs(a.hexMap.numCols - Mathf.Abs(a.S - b.S)));
+
+        return Mathf.Max(dQ,
                          Mathf.Abs(a.R - b.R),
-                         Mathf.Abs(a.S - b.S));
+                         dS);
     }
 }
