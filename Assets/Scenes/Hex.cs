@@ -55,6 +55,7 @@ public class Hex {
     }
 
     public static float distance(Hex a, Hex b) {
+        //TODO: test this. probably wrong for wrapping
         int dQ = Mathf.Min(Mathf.Abs(a.Q - b.Q),
                             Mathf.Abs(a.hexMap.numCols - Mathf.Abs(a.Q - b.Q)));
 
