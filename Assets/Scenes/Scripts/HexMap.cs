@@ -21,29 +21,35 @@ public class HexMap : MonoBehaviour {
         GenerateMap();
     }
 
-    public GameObject HexPrefab;
+    //terrain stuff
+    public GameObject hexPrefab;
 
-    public Mesh MeshWater;
-    public Mesh MeshFlat;
-    public Mesh MeshHill;
-    public Mesh MeshMountain;
+    public Mesh meshWater;
+    public Mesh meshFlat;
+    public Mesh meshHill;
+    public Mesh meshMountain;
 
     public GameObject rainForestPrefab;
     public GameObject forestPrefab;
     public GameObject rainForestHillPrefab;
     public GameObject forestHillPrefab;
 
-    public Material MatOcean;
-    public Material MatPlains;
-    public Material MatGrassland;
-    public Material MatMountain;
-    public Material MatDesert;
+    public Material matOcean;
+    public Material matPlains;
+    public Material matGrassland;
+    public Material matMountain;
+    public Material matDesert;
 
     public readonly int numCols = 80;
     public readonly int numRows = 40;
 
     private Hex[,] hexes;
     private Dictionary<Hex, GameObject> hexToGOMap;
+
+    //unit stuff
+    public GameObject unitFootsoldierPrefab;
+    private HashSet<Unit> units;
+    private Dictionary<Unit, GameObject> unitToGOMap;
 
     public Hex getHex(int q, int r) {
         if(hexes == null) {
@@ -87,7 +93,7 @@ public class HexMap : MonoBehaviour {
                     numRows
                 );
 
-                GameObject hexGO = Instantiate(HexPrefab,
+                GameObject hexGO = Instantiate(hexPrefab,
                             pos,
                             Quaternion.identity,
                             this.transform);
@@ -98,13 +104,14 @@ public class HexMap : MonoBehaviour {
                 hexGO.GetComponent<HexBehavior>().hexMap = this;
                 //hexGO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", col, row);
                 hexGO.GetComponentInChildren<TextMesh>().text = "";
+                hexGO.name = string.Format("HEX: {0},{1}", col, row);
 
 
                 MeshRenderer mr = hexGO.GetComponentInChildren<MeshRenderer>();
-                mr.material = MatOcean;
+                mr.material = matOcean;
 
                 MeshFilter mf = hexGO.GetComponentInChildren<MeshFilter>();
-                mf.mesh = MeshWater;
+                mf.mesh = meshWater;
             }
         }
     }
@@ -121,7 +128,7 @@ public class HexMap : MonoBehaviour {
                 //set model based on moisture
                 if(h.elevation >= FLAT_HTHRESH && h.elevation < MOUNTAIN_HTHRESH) {
                     if (h.moisture >= RAINFOREST_MTHRESH) {
-                        mr.material = MatGrassland;
+                        mr.material = matGrassland;
                         if(h.elevation >= HILL_HTHRESH) { //check if we should use rainforest for hills or flat land
                             GameObject.Instantiate(rainForestHillPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         } else {
@@ -129,32 +136,32 @@ public class HexMap : MonoBehaviour {
                         }
                         
                     } else if (h.moisture >= FOREST_MTHRESH) {
-                        mr.material = MatGrassland;
+                        mr.material = matGrassland;
                         if (h.elevation >= HILL_HTHRESH) { //check if we should use forest for hills or flat land
                             GameObject.Instantiate(forestHillPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         } else {
                             GameObject.Instantiate(forestPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         }
                     } else if (h.moisture >= GRASSLAND_MTHRESH) {
-                        mr.material = MatGrassland;
+                        mr.material = matGrassland;
                     } else if (h.moisture >= PLAINS_MTHRESH) {
-                        mr.material = MatPlains;
+                        mr.material = matPlains;
                     } else {
-                        mr.material = MatDesert;
+                        mr.material = matDesert;
                     }
                 }
 
                 //set model and mesh based on elevation
                 if (h.elevation >= MOUNTAIN_HTHRESH) {
-                    mr.material = MatMountain;
-                    mf.mesh = MeshMountain;
+                    mr.material = matMountain;
+                    mf.mesh = meshMountain;
                 } else if (h.elevation >= HILL_HTHRESH) {
-                    mf.mesh = MeshHill;
+                    mf.mesh = meshHill;
                 } else if (h.elevation >= FLAT_HTHRESH) {
-                    mf.mesh = MeshWater;
+                    mf.mesh = meshWater;
                 } else {
-                    mr.material = MatOcean;
-                    mf.mesh = MeshFlat;
+                    mr.material = matOcean;
+                    mf.mesh = meshFlat;
                 }
             }
         }
@@ -170,5 +177,18 @@ public class HexMap : MonoBehaviour {
         }
 
         return results.ToArray();
+    }
+
+    public void spawnUnitAt(Unit unit, GameObject prefab, int q, int r) {
+        if(units == null) {
+            units = new HashSet<Unit>();
+            unitToGOMap = new Dictionary<Unit, GameObject>();
+        }
+
+        GameObject unitHex = hexToGOMap[getHex(q, r)];
+        GameObject unitGO = Instantiate(prefab, unitHex.transform.position, Quaternion.identity, unitHex.transform);
+
+        units.Add(unit);
+        unitToGOMap[unit] = unitGO;
     }
 }

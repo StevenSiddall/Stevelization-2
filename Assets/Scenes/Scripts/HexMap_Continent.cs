@@ -25,7 +25,7 @@ public class HexMap_Continent : HexMap
         int continentSpacing = numCols / numContinents;
 
         //generate each continent
-        //Random.InitState(0);
+        Random.InitState(0);
         for(int c = 0; c < numContinents; c++) {
             //generate raised area for land
             int numSplats = Random.Range( N_SPLATS_MIN, N_SPLATS_MAX );
@@ -69,6 +69,9 @@ public class HexMap_Continent : HexMap
         }
 
         updateHexVisuals();
+
+        Unit unit = new Unit();
+        spawnUnitAt(unit, unitFootsoldierPrefab, 62, 6);
 
     }
 

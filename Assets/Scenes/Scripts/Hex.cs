@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 
 /*
@@ -24,6 +25,8 @@ public class Hex {
     //terrain data for terrain generation + weather effects
     public float elevation;
     public float moisture;
+
+    HashSet<Unit> units;
 
     public Hex(HexMap hexmap, int q, int r) {
         this.hexMap = hexmap;
@@ -65,5 +68,27 @@ public class Hex {
         return Mathf.Max(dQ,
                          Mathf.Abs(a.R - b.R),
                          dS);
+    }
+
+    public void addUnit(Unit unit) {
+        if(units == null) {
+            units = new HashSet<Unit>();
+        }
+
+        units.Add(unit);
+    }
+
+    public void removeUnit(Unit unit) {
+        if(units == null) {
+            return;
+        }
+
+        if(units.Remove(unit) == false) {
+            Debug.LogError("Unit not present!");
+        }
+    }
+
+    public Unit[] getUnitArray() {
+        return units.ToArray<Unit>();
     }
 }
