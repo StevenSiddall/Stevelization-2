@@ -45,6 +45,10 @@ public class Hex {
             VERT_SPACING * this.R);
     }
 
+    public Vector3 positionFromCamera() {
+        return hexMap.getHexPosition(this);
+    }
+
     public Vector3 positionFromCamera(Vector3 camPos, float numCols, float numRows) {
         float mapWidth = numCols * HORIZ_SPACING;
 

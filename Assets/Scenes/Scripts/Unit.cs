@@ -11,12 +11,29 @@ public class Unit {
     public int movement = 2;
     public int movementRemaining = 2;
 
-    public void setHex(Hex otherhex) {
+    public delegate void UnitMovedDelegate(Hex oldHex, Hex newHex);
+
+    public event UnitMovedDelegate onUnitMoved;
+
+    public void setHex(Hex newHex) {
+        Hex oldHex = this.hex;
         if(this.hex != null) {
             this.hex.removeUnit(this);
         }
 
-        this.hex = otherhex;
+        this.hex = newHex;
         this.hex.addUnit(this);
+
+        if(onUnitMoved != null) {
+            onUnitMoved(oldHex, newHex);
+        }
+    }
+
+    public void doTurn() {
+        //TESTING: move unit to the right
+        Hex oldHex = this.hex;
+        Hex newHex = oldHex.hexMap.getHex(oldHex.Q + 1, oldHex.R);
+
+        setHex(newHex);
     }
 }

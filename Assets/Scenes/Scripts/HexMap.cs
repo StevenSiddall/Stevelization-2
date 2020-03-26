@@ -21,6 +21,16 @@ public class HexMap : MonoBehaviour {
         GenerateMap();
     }
 
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            if(units != null) {
+                foreach(Unit u in units) {
+                    u.doTurn();
+                }
+            }
+        }
+    }
+
     //terrain stuff
     public GameObject hexPrefab;
 
@@ -167,6 +177,16 @@ public class HexMap : MonoBehaviour {
         }
     }
 
+    public Vector3 getHexPosition(int q, int r) {
+        Hex h = getHex(q, r);
+
+        return getHexPosition(h);
+    }
+
+    public Vector3 getHexPosition(Hex h) {
+        return h.positionFromCamera(Camera.main.transform.position, numCols, numRows);
+    }
+
     public Hex[] getHexesWithinRange(Hex centerHex, int range) {
         List<Hex> results = new List<Hex>();
 
@@ -186,7 +206,10 @@ public class HexMap : MonoBehaviour {
         }
 
         GameObject unitHex = hexToGOMap[getHex(q, r)];
+        unit.setHex(getHex(q, r));
+
         GameObject unitGO = Instantiate(prefab, unitHex.transform.position, Quaternion.identity, unitHex.transform);
+        unit.onUnitMoved += unitGO.GetComponent<UnitView>().onUnitMoved;
 
         units.Add(unit);
         unitToGOMap[unit] = unitGO;
