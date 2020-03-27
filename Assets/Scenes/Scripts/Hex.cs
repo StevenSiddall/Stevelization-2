@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -25,6 +26,8 @@ public class Hex {
     //terrain data for terrain generation + weather effects
     public float elevation;
     public float moisture;
+
+    private float baseMovementCost = Mathf.Infinity;
 
     HashSet<Unit> units;
 
@@ -92,7 +95,39 @@ public class Hex {
         }
     }
 
+    public float movementCost() {
+        return baseMovementCost;
+    }
+
     public Unit[] getUnitArray() {
         return units.ToArray<Unit>();
+    }
+
+    public Hex[] getNeighbors() {
+        //TODO: what if this hex is at the north or south edge of the map
+        Hex[] hexes = new Hex[6];
+        hexes[0] = hexMap.getHex(this.Q,        this.R - 1);
+        hexes[1] = hexMap.getHex(this.Q + 1,    this.R - 1);
+        hexes[2] = hexMap.getHex(this.Q + 1,    this.R);
+        hexes[3] = hexMap.getHex(this.Q,        this.R + 1);
+        hexes[4] = hexMap.getHex(this.Q - 1,    this.R + 1);
+        hexes[5] = hexMap.getHex(this.Q - 1,    this.R);
+
+        List<Hex> neighbors = new List<Hex>();
+        for(int i = 0; i < hexes.Length; i++) {
+            if(hexes[i] != null) {
+                neighbors.Add(hexes[i]);
+            }
+        }
+
+        return neighbors.ToArray();
+    }
+
+    public string coordsString() {
+        return ("(" + this.Q + "," + this.R + ")");
+    }
+
+    public void setBaseMovementCost(float newCost) {
+        baseMovementCost = newCost;
     }
 }

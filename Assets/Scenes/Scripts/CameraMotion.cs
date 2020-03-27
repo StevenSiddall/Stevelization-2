@@ -13,11 +13,6 @@ public class CameraMotion : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        /*
-         * TODO: code to click and drag
-         *          wasd
-         *          zoom in and out
-         * */
         checkIfCameraMoved();
     }
 

@@ -12,7 +12,13 @@ public class MouseController : MonoBehaviour
     public static readonly float ZOOM_THRESH = 0.01f; //minimum change in zoom to process
 
     public static readonly int BUTTON_LEFTMOUSE = 0;
+    public static readonly int BUTTON_RIGHTMOUSE = 1;
 
+    //unit movement stuff
+    bool rmbDown = false;
+    ActionController actionController;
+    HexMap hexMap;
+    public LayerMask LayerIDForHexTiles;
 
     Vector3 lastMousePos; //from input.mouseposition
 
@@ -25,6 +31,8 @@ public class MouseController : MonoBehaviour
     // Start is called before the first frame update
     void Start() {
         update_CurrentFunc = update_DetectModeStart;
+        actionController = GameObject.FindObjectOfType<ActionController>();
+        hexMap = GameObject.FindObjectOfType<HexMap>();
     }
 
     void Update() {
@@ -44,13 +52,21 @@ public class MouseController : MonoBehaviour
 
         } else if (Input.GetMouseButtonUp(BUTTON_LEFTMOUSE)) {
             //TODO: are we click on a tile with a unit?
-
-        } else if (Input.GetMouseButton(0) && Input.mousePosition != lastMousePos) { // LMB is being held down
+            Debug.Log("left click");
+            actionController.selectHex(mouseToHex());
+        } else if (Input.GetMouseButton(BUTTON_LEFTMOUSE) && Input.mousePosition != lastMousePos) { // LMB is being held down
 
             // LMB held down and mouse moved -- camera drag
             lastMouseGroundPlanePos = mouseToGroundPlane(Input.mousePosition);
             update_CurrentFunc = update_clickAndDrag;
             update_CurrentFunc();
+        } else if (Input.GetMouseButton(BUTTON_RIGHTMOUSE)) {
+            //right clicked somewhere -- tell action controller
+            rmbDown = true;
+        } else if(rmbDown) {
+            Debug.Log("right click");
+            rmbDown = false;
+            actionController.moveOrder(mouseToHex());
         }
     }
 
@@ -117,5 +133,25 @@ public class MouseController : MonoBehaviour
         update_CurrentFunc = update_DetectModeStart;
 
         //clean up any UI stuff associated with modes
+    }
+
+    private Hex mouseToHex() {
+        Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hitInfo;
+
+        int layerMask = LayerIDForHexTiles.value;
+
+        if (Physics.Raycast(mouseRay, out hitInfo, Mathf.Infinity, layerMask)) {
+            // Something got hit
+            Debug.Log( hitInfo.rigidbody.gameObject.transform.parent.gameObject );
+
+            // The collider is a child of the "correct" game object that we want.
+            GameObject hexGO = hitInfo.rigidbody.gameObject.transform.parent.gameObject;
+
+            return hexMap.GetHexFromGameObject(hexGO);
+        }
+
+        //no hex there
+        return null;
     }
 }

@@ -4,16 +4,22 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - HexPrefab: {fileID: 4826415425860855482, guid: 4c2469ba8d1d9674f83a3e0a31ff5452,
+  - hexPrefab: {fileID: 4826415425860855482, guid: 4c2469ba8d1d9674f83a3e0a31ff5452,
       type: 3}
-  - MeshWater: {instanceID: 0}
-  - MeshFlat: {instanceID: 0}
-  - MeshHill: {instanceID: 0}
-  - MeshMountain: {instanceID: 0}
-  - MatOcean: {instanceID: 0}
-  - MatPlains: {instanceID: 0}
-  - MatGrassland: {instanceID: 0}
-  - MatMountain: {instanceID: 0}
+  - meshWater: {instanceID: 0}
+  - meshFlat: {instanceID: 0}
+  - meshHill: {instanceID: 0}
+  - meshMountain: {instanceID: 0}
+  - rainForestPrefab: {instanceID: 0}
+  - forestPrefab: {instanceID: 0}
+  - rainForestHillPrefab: {instanceID: 0}
+  - forestHillPrefab: {instanceID: 0}
+  - matOcean: {instanceID: 0}
+  - matPlains: {instanceID: 0}
+  - matGrassland: {instanceID: 0}
+  - matMountain: {instanceID: 0}
+  - matDesert: {instanceID: 0}
+  - unitFootsoldierPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

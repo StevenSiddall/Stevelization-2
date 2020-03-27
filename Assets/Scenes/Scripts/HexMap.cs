@@ -15,6 +15,13 @@ public class HexMap : MonoBehaviour {
 
     public readonly float INIT_ELEVATION = -0.35f;
 
+    public readonly float FLAT_MOVECOST = 1;
+    public readonly float HILL_MOVECOST = 2;
+    public readonly float FOREST_MOVECOST = 2;
+    public readonly float RAINFOREST_MOVECOST = 2;
+    public readonly float MOUNTAIN_MOVECOST = Mathf.Infinity;
+    public readonly float WATER_MOVECOST = Mathf.Infinity;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -55,9 +62,12 @@ public class HexMap : MonoBehaviour {
 
     private Hex[,] hexes;
     private Dictionary<Hex, GameObject> hexToGOMap;
+    private Dictionary<GameObject, Hex> goToHexMap;
 
     //unit stuff
     public GameObject unitFootsoldierPrefab;
+
+    public Unit selectedUnit;
     private HashSet<Unit> units;
     private Dictionary<Unit, GameObject> unitToGOMap;
 
@@ -74,10 +84,10 @@ public class HexMap : MonoBehaviour {
         }
 
         if (q < 0 || q >= numCols) {
-            Debug.LogError("q out of bounds: " + q);
+            Debug.Log("q out of bounds: " + q);
             return null;
         } else if (r < 0 || r >= numRows) {
-            Debug.LogError("r out of bounds: " + r);
+            Debug.Log("r out of bounds: " + r);
             return null;
         }
 
@@ -89,6 +99,7 @@ public class HexMap : MonoBehaviour {
         // Generate a map filled with ocean
         hexes = new Hex[numCols, numRows];
         hexToGOMap = new Dictionary<Hex, GameObject>();
+        goToHexMap = new Dictionary<GameObject, Hex>();
 
         for(int col = 0; col < numCols; col++) {
             for(int row = 0; row < numRows; row++) {
@@ -109,6 +120,7 @@ public class HexMap : MonoBehaviour {
                             this.transform);
 
                 hexToGOMap[h] = hexGO;
+                goToHexMap[hexGO] = h;
 
                 hexGO.GetComponent<HexBehavior>().hex = h;
                 hexGO.GetComponent<HexBehavior>().hexMap = this;
@@ -135,11 +147,12 @@ public class HexMap : MonoBehaviour {
                 MeshRenderer mr = hexGO.GetComponentInChildren<MeshRenderer>();
                 MeshFilter mf = hexGO.GetComponentInChildren<MeshFilter>();
 
-                //set model based on moisture
+                //set model and movement cost based on moisture
                 if(h.elevation >= FLAT_HTHRESH && h.elevation < MOUNTAIN_HTHRESH) {
                     if (h.moisture >= RAINFOREST_MTHRESH) {
                         mr.material = matGrassland;
-                        if(h.elevation >= HILL_HTHRESH) { //check if we should use rainforest for hills or flat land
+                        h.setBaseMovementCost(RAINFOREST_MOVECOST);
+                        if (h.elevation >= HILL_HTHRESH) { //check if we should use rainforest for hills or flat land
                             GameObject.Instantiate(rainForestHillPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         } else {
                             GameObject.Instantiate(rainForestPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
@@ -147,6 +160,7 @@ public class HexMap : MonoBehaviour {
                         
                     } else if (h.moisture >= FOREST_MTHRESH) {
                         mr.material = matGrassland;
+                        h.setBaseMovementCost(FOREST_MOVECOST);
                         if (h.elevation >= HILL_HTHRESH) { //check if we should use forest for hills or flat land
                             GameObject.Instantiate(forestHillPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         } else {
@@ -154,10 +168,13 @@ public class HexMap : MonoBehaviour {
                         }
                     } else if (h.moisture >= GRASSLAND_MTHRESH) {
                         mr.material = matGrassland;
+                        h.setBaseMovementCost(FLAT_MOVECOST);
                     } else if (h.moisture >= PLAINS_MTHRESH) {
                         mr.material = matPlains;
+                        h.setBaseMovementCost(FLAT_MOVECOST);
                     } else {
                         mr.material = matDesert;
+                        h.setBaseMovementCost(FLAT_MOVECOST);
                     }
                 }
 
@@ -165,14 +182,19 @@ public class HexMap : MonoBehaviour {
                 if (h.elevation >= MOUNTAIN_HTHRESH) {
                     mr.material = matMountain;
                     mf.mesh = meshMountain;
+                    h.setBaseMovementCost(MOUNTAIN_MOVECOST);
                 } else if (h.elevation >= HILL_HTHRESH) {
                     mf.mesh = meshHill;
+                    h.setBaseMovementCost(HILL_MOVECOST);
                 } else if (h.elevation >= FLAT_HTHRESH) {
                     mf.mesh = meshWater;
                 } else {
                     mr.material = matOcean;
                     mf.mesh = meshFlat;
+                    h.setBaseMovementCost(WATER_MOVECOST);
                 }
+
+                //hexGO.GetComponentInChildren<TextMesh>().text += ("\n" + h.movementCost());
             }
         }
     }
@@ -197,6 +219,14 @@ public class HexMap : MonoBehaviour {
         }
 
         return results.ToArray();
+    }
+
+    public Hex GetHexFromGameObject(GameObject hexGO) {
+        if (goToHexMap.ContainsKey(hexGO)) {
+            return goToHexMap[hexGO];
+        }
+
+        return null;
     }
 
     public void spawnUnitAt(Unit unit, GameObject prefab, int q, int r) {
