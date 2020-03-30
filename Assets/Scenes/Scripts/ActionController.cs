@@ -54,7 +54,7 @@ public class ActionController : MonoBehaviour {
         //make sure we found a path
         Hex[] path = HexPathfinder.getPath(selectedHex, toHex);
         if (path == null) {
-            Debug.LogError("Couldn't find path to hex");
+            Debug.Log("Couldn't find path to hex");
             return;
         }
 

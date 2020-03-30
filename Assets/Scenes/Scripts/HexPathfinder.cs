@@ -29,8 +29,10 @@ public class HexPathfinder {
             Hex currHex = openSet.dequeue();
             Debug.Log("currhex: Q=" + currHex.Q + ", R=" + currHex.R);
 
-            if (currHex == end) {
-                return reconstructPath(cameFrom, currHex);
+            if(f[currHex] >= Mathf.Infinity) { // no route is possible
+                return reconstructPath(null, null, Mathf.Infinity);
+            } else if (currHex == end) { // found the best route
+                return reconstructPath(cameFrom, currHex, g[currHex]);
             }
 
             Hex[] neighbors = currHex.getNeighbors();
@@ -49,7 +51,11 @@ public class HexPathfinder {
         return null;
     }
 
-    private static Hex[] reconstructPath(Dictionary<Hex, Hex> cameFrom, Hex endHex) {
+    private static Hex[] reconstructPath(Dictionary<Hex, Hex> cameFrom, Hex endHex, float totalDist) {
+        if (totalDist >= Mathf.Infinity) {
+            return null;
+        }
+
         if (!cameFrom.ContainsKey(endHex)) {
             Hex[] path = new Hex[1];
             path[0] = endHex;

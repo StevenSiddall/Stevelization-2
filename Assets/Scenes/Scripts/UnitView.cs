@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UnitView : MonoBehaviour {
+    public static readonly int MAX_SMOOTHMOVE_DIST = 12; //units moving to a new position greater than this number away will teleport instead of move smoothly
+
     Vector3 oldPos;
     Vector3 newPos;
 
@@ -19,6 +21,8 @@ public class UnitView : MonoBehaviour {
     }
 
     void Update() {
-        this.transform.position = Vector3.SmoothDamp(this.transform.position, newPos, ref currentVelocity, smoothTime);
+        if(Vector3.Distance(newPos, this.transform.position) <= MAX_SMOOTHMOVE_DIST) {
+            this.transform.position = Vector3.SmoothDamp(this.transform.position, newPos, ref currentVelocity, smoothTime);
+        }
     }
 }
