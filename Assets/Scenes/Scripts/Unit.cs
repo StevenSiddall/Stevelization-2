@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit {
-
+    public static readonly Vector3 FLATHEIGHT = Vector3.down * .3f;
     public Hex hex { get; protected set; }
 
     public string name = "No name";

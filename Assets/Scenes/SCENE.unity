@@ -307,70 +307,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 40, y: -73, z: 0}
---- !u!1 &269441203
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 269441205}
-  - component: {fileID: 269441204}
-  m_Layer: 0
-  m_Name: HexMap
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &269441204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 269441203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af965e4891673c94087b242ddfc17ad4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hexPrefab: {fileID: 4826415425860855482, guid: 4c2469ba8d1d9674f83a3e0a31ff5452,
-    type: 3}
-  meshWater: {fileID: 4300000, guid: 296f4518ab1b2eb42916ff953aa13a32, type: 3}
-  meshFlat: {fileID: 4300000, guid: 296f4518ab1b2eb42916ff953aa13a32, type: 3}
-  meshHill: {fileID: 4300000, guid: 14f7895b22af0134ca757c0ef506bddf, type: 3}
-  meshMountain: {fileID: 4300000, guid: 3c8fac29ebf848c4cb65bfb95c9da1c2, type: 3}
-  rainForestPrefab: {fileID: 1189673563729522135, guid: a46dfbd4c91e31d4e9f714804972ee6a,
-    type: 3}
-  forestPrefab: {fileID: 1189673563729522135, guid: a46dfbd4c91e31d4e9f714804972ee6a,
-    type: 3}
-  rainForestHillPrefab: {fileID: 27415319658671285, guid: 66e7d5927fc4cec49a0246cfb05ad4ce,
-    type: 3}
-  forestHillPrefab: {fileID: 27415319658671285, guid: 66e7d5927fc4cec49a0246cfb05ad4ce,
-    type: 3}
-  matOcean: {fileID: 2100000, guid: d12e34b4ed564394b99a6d663a632688, type: 2}
-  matPlains: {fileID: 2100000, guid: 680181de79eed984fad2cb91736f1eaa, type: 2}
-  matGrassland: {fileID: 2100000, guid: 7af21c895385353429e263c700f727aa, type: 2}
-  matMountain: {fileID: 2100000, guid: c9af90876dc7f5746814c93a00c50dfd, type: 2}
-  matDesert: {fileID: 2100000, guid: 3b1696625f5194445a4c6f90b087c81e, type: 2}
-  unitFootsoldierPrefab: {fileID: 601361201574675800, guid: 95fe6214b6155734e975773dae2fd7a5,
-    type: 3}
---- !u!4 &269441205
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 269441203}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -27.990149, y: 24.068401, z: 21.042587}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &534669902
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,6 +445,70 @@ Transform:
   - {fileID: 534669905}
   m_Father: {fileID: 0}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1654146043
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1654146045}
+  - component: {fileID: 1654146044}
+  m_Layer: 0
+  m_Name: HexMap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1654146044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654146043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af965e4891673c94087b242ddfc17ad4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hexPrefab: {fileID: 4826415425860855482, guid: 4c2469ba8d1d9674f83a3e0a31ff5452,
+    type: 3}
+  meshWater: {fileID: 4300000, guid: 296f4518ab1b2eb42916ff953aa13a32, type: 3}
+  meshFlat: {fileID: 4300000, guid: 296f4518ab1b2eb42916ff953aa13a32, type: 3}
+  meshHill: {fileID: 4300000, guid: 14f7895b22af0134ca757c0ef506bddf, type: 3}
+  meshMountain: {fileID: 4300000, guid: 3c8fac29ebf848c4cb65bfb95c9da1c2, type: 3}
+  rainForestPrefab: {fileID: 1189673563729522135, guid: a46dfbd4c91e31d4e9f714804972ee6a,
+    type: 3}
+  forestPrefab: {fileID: 1189673563729522135, guid: a46dfbd4c91e31d4e9f714804972ee6a,
+    type: 3}
+  rainForestHillPrefab: {fileID: 27415319658671285, guid: 66e7d5927fc4cec49a0246cfb05ad4ce,
+    type: 3}
+  forestHillPrefab: {fileID: 27415319658671285, guid: 66e7d5927fc4cec49a0246cfb05ad4ce,
+    type: 3}
+  matOcean: {fileID: 2100000, guid: d12e34b4ed564394b99a6d663a632688, type: 2}
+  matPlains: {fileID: 2100000, guid: 680181de79eed984fad2cb91736f1eaa, type: 2}
+  matGrassland: {fileID: 2100000, guid: 7af21c895385353429e263c700f727aa, type: 2}
+  matMountain: {fileID: 2100000, guid: c9af90876dc7f5746814c93a00c50dfd, type: 2}
+  matDesert: {fileID: 2100000, guid: 3b1696625f5194445a4c6f90b087c81e, type: 2}
+  unitFootsoldierPrefab: {fileID: 601361201574675800, guid: 95fe6214b6155734e975773dae2fd7a5,
+    type: 3}
+--- !u!4 &1654146045
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1654146043}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -27.990149, y: 24.068401, z: 21.042587}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1819373762
 GameObject:

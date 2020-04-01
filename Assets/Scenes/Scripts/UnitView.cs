@@ -13,8 +13,6 @@ public class UnitView : MonoBehaviour {
     Vector3 currentVelocity;
     float smoothTime = 0.5f;
 
-    float maxVelo = 0;
-
     //should only ever move a unit one tile at a time
     public void onUnitMoved(Hex oldHex, Hex newHex) {
         oldPos = oldHex.positionFromCamera();
@@ -28,13 +26,10 @@ public class UnitView : MonoBehaviour {
 
     void Update() {
         if(Vector3.Distance(newPos, this.transform.position) <= MAX_SMOOTHMOVE_DIST) {
-            this.transform.position = Vector3.SmoothDamp(this.transform.position, newPos, ref currentVelocity, smoothTime);
-            if(currentVelocity.magnitude > maxVelo) {
-                maxVelo = currentVelocity.magnitude;
-                Debug.Log("max:" + maxVelo);
-            }
+            this.transform.position = Vector3.SmoothDamp(this.transform.position, newPos + Unit.FLATHEIGHT, ref currentVelocity, smoothTime);
+            this.gameObject.GetComponentInChildren<Animator>().SetLayerWeight(RUNNING_ANIMLAYER, currentVelocity.magnitude / MAX_EXPECTED_VELO);
         }
-        this.gameObject.GetComponentInChildren<Animator>().SetLayerWeight(RUNNING_ANIMLAYER, currentVelocity.magnitude / MAX_EXPECTED_VELO);
+        
     }
 
     void updateAngle() {
