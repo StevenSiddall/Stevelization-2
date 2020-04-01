@@ -27,7 +27,6 @@ public class HexPathfinder {
 
         while(openSet.Count() > 0) {
             Hex currHex = openSet.dequeue();
-            Debug.Log("currhex: Q=" + currHex.Q + ", R=" + currHex.R);
 
             if(f[currHex] >= Mathf.Infinity) { // no route is possible
                 return reconstructPath(null, null, Mathf.Infinity);
@@ -81,7 +80,6 @@ public class HexPathfinder {
      */
     private static float heuristic(Hex start, Hex end) {
         float dist = linearHeuristic(start, end);
-        Debug.Log("Dist from " + start.coordsString() + " to " + end.coordsString() + " = " + dist);
         return dist;
     }
 

@@ -221,9 +221,17 @@ public class HexMap : MonoBehaviour {
         return results.ToArray();
     }
 
-    public Hex GetHexFromGameObject(GameObject hexGO) {
+    public Hex getHexFromGO(GameObject hexGO) {
         if (goToHexMap.ContainsKey(hexGO)) {
             return goToHexMap[hexGO];
+        }
+
+        return null;
+    }
+
+    public GameObject getGOFromHex(Hex h) {
+        if (hexToGOMap.ContainsKey(h)) {
+            return hexToGOMap[h];
         }
 
         return null;

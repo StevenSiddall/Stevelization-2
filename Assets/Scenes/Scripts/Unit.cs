@@ -32,6 +32,13 @@ public class Unit {
         }
     }
 
+    public Hex[] getHexPath() {
+        if(hexPath == null) {
+            return null;
+        }
+        return this.hexPath.ToArray();
+    }
+
     public void setHexPath(Hex[] hexPath) {
         this.hexPath = new Queue<Hex>(hexPath);
     }
@@ -47,7 +54,7 @@ public class Unit {
     }
 
     public float movementCostToEnterHex(Hex hex) {
-        //TODO: factor in movement mode + terrain type
+        //TODO: factor in movement mode
         return hex.movementCost();
     }
 
