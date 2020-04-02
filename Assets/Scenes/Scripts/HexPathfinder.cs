@@ -36,7 +36,7 @@ public class HexPathfinder {
 
             Hex[] neighbors = currHex.getNeighbors();
             foreach(Hex n in neighbors) {
-                float tentative_gScore = g[currHex] + n.movementCost();
+                float tentative_gScore = g[currHex] + n.getMovementCost();
                 if(!g.ContainsKey(n) || tentative_gScore < g[n]) {
                     cameFrom[n] = currHex;
                     g[n] = tentative_gScore;

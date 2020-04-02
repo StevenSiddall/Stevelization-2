@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿//#define DEBUG_LABELS
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,13 +16,6 @@ public class HexMap : MonoBehaviour {
     public readonly float PLAINS_MTHRESH = .2f;
 
     public readonly float INIT_ELEVATION = -0.35f;
-
-    public readonly float FLAT_MOVECOST = 1;
-    public readonly float HILL_MOVECOST = 2;
-    public readonly float FOREST_MOVECOST = 2;
-    public readonly float RAINFOREST_MOVECOST = 2;
-    public readonly float MOUNTAIN_MOVECOST = Mathf.Infinity;
-    public readonly float WATER_MOVECOST = Mathf.Infinity;
 
     // Start is called before the first frame update
     void Start()
@@ -124,8 +119,12 @@ public class HexMap : MonoBehaviour {
 
                 hexGO.GetComponent<HexBehavior>().hex = h;
                 hexGO.GetComponent<HexBehavior>().hexMap = this;
-                //hexGO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", col, row);
+
+#if DEBUG_LABELS
+                hexGO.GetComponentInChildren<TextMesh>().text = string.Format("{0},{1}", col, row);
+#else
                 hexGO.GetComponentInChildren<TextMesh>().text = "";
+#endif
                 hexGO.name = string.Format("HEX: {0},{1}", col, row);
 
 
@@ -151,7 +150,8 @@ public class HexMap : MonoBehaviour {
                 if(h.elevation >= FLAT_HTHRESH && h.elevation < MOUNTAIN_HTHRESH) {
                     if (h.moisture >= RAINFOREST_MTHRESH) {
                         mr.material = matGrassland;
-                        h.setBaseMovementCost(RAINFOREST_MOVECOST);
+                        h.setFeature(Hex.FEATURE_TYPE.RAINFOREST);
+                        h.setTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
                         if (h.elevation >= HILL_HTHRESH) { //check if we should use rainforest for hills or flat land
                             GameObject.Instantiate(rainForestHillPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         } else {
@@ -160,7 +160,8 @@ public class HexMap : MonoBehaviour {
                         
                     } else if (h.moisture >= FOREST_MTHRESH) {
                         mr.material = matGrassland;
-                        h.setBaseMovementCost(FOREST_MOVECOST);
+                        h.setFeature(Hex.FEATURE_TYPE.FOREST);
+                        h.setTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
                         if (h.elevation >= HILL_HTHRESH) { //check if we should use forest for hills or flat land
                             GameObject.Instantiate(forestHillPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         } else {
@@ -168,13 +169,16 @@ public class HexMap : MonoBehaviour {
                         }
                     } else if (h.moisture >= GRASSLAND_MTHRESH) {
                         mr.material = matGrassland;
-                        h.setBaseMovementCost(FLAT_MOVECOST);
+                        h.setFeature(Hex.FEATURE_TYPE.NONE);
+                        h.setTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
                     } else if (h.moisture >= PLAINS_MTHRESH) {
                         mr.material = matPlains;
-                        h.setBaseMovementCost(FLAT_MOVECOST);
+                        h.setFeature(Hex.FEATURE_TYPE.NONE);
+                        h.setTerrainType(Hex.TERRAIN_TYPE.PLAINS);
                     } else {
                         mr.material = matDesert;
-                        h.setBaseMovementCost(FLAT_MOVECOST);
+                        h.setFeature(Hex.FEATURE_TYPE.NONE);
+                        h.setTerrainType(Hex.TERRAIN_TYPE.DESERT);
                     }
                 }
 
@@ -182,19 +186,24 @@ public class HexMap : MonoBehaviour {
                 if (h.elevation >= MOUNTAIN_HTHRESH) {
                     mr.material = matMountain;
                     mf.mesh = meshMountain;
-                    h.setBaseMovementCost(MOUNTAIN_MOVECOST);
+                    h.setElevationType(Hex.ELEVATION_TYPE.MOUNTAIN);
                 } else if (h.elevation >= HILL_HTHRESH) {
                     mf.mesh = meshHill;
-                    h.setBaseMovementCost(HILL_MOVECOST);
+                    h.setElevationType(Hex.ELEVATION_TYPE.HILL);
                 } else if (h.elevation >= FLAT_HTHRESH) {
-                    mf.mesh = meshWater;
+                    mf.mesh = meshFlat;
+                    h.setElevationType(Hex.ELEVATION_TYPE.FLAT);
                 } else {
                     mr.material = matOcean;
-                    mf.mesh = meshFlat;
-                    h.setBaseMovementCost(WATER_MOVECOST);
+                    mf.mesh = meshWater;
+                    h.setElevationType(Hex.ELEVATION_TYPE.WATER);
+                    h.setFeature(Hex.FEATURE_TYPE.NONE);
+                    h.setTerrainType(Hex.TERRAIN_TYPE.WATER);
                 }
 
-                //hexGO.GetComponentInChildren<TextMesh>().text += ("\n" + h.movementCost());
+#if DEBUG_LABELS
+                hexGO.GetComponentInChildren<TextMesh>().text += ("\n" + h.getMovementCost());
+#endif
             }
         }
     }

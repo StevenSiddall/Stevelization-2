@@ -55,7 +55,7 @@ public class Unit {
 
     public float movementCostToEnterHex(Hex hex) {
         //TODO: factor in movement mode
-        return hex.movementCost();
+        return hex.getMovementCost();
     }
 
     // turn cost != movement cost

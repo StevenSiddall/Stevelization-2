@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-
 /*
  * Defines grid position, world position, size, neighbors, etc of a hex tile
  * */
@@ -17,17 +16,37 @@ public class Hex {
     static readonly float VERT_SPACING = HEIGHT * 0.75f;
     static readonly float HORIZ_SPACING = WIDTH;
 
+    //unit movement stuff
+    static readonly float BASE_MOVECOST = 1f; //cost of entering an unimproved flat tile
+    static readonly float HILL_MOVECOST = 2f; //cost of entering an unimproved hill tile
+    static readonly float FOREST_MOVECOST = 2f; //cost of entering an unimproved forest tile
+    static readonly float RAINFOREST_MOVECOST = 2f; //cost of entering an unimproved rainforest tile
+    static readonly float MOUNTAIN_MOVECOST = Mathf.Infinity; //cost of entering an unimproved mountain tile
+    static readonly float WATER_MOVECOST = Mathf.Infinity; //cost of entering an unimproved water tile
+
+    //hexmap stuff
     public readonly int Q;
     public readonly int R;
     public readonly int S;
 
     public readonly HexMap hexMap;
 
-    //terrain data for terrain generation + weather effects
+    //terrain stuff
     public float elevation;
     public float moisture;
 
-    private float baseMovementCost = Mathf.Infinity;
+    public enum TERRAIN_TYPE { PLAINS, GRASSLANDS, DESERT, WATER }
+    public enum ELEVATION_TYPE { FLAT, HILL, MOUNTAIN, WATER }
+    public enum FEATURE_TYPE { NONE, FOREST, RAINFOREST }
+
+    private TERRAIN_TYPE terrainType;
+    private ELEVATION_TYPE elevationType;
+    private FEATURE_TYPE featureType;
+    //TODO: add a list of modifiers -- includes improvements, buildings, etc.
+    //TODO: add data about owner, population, etc
+
+
+    private float movementCost = Mathf.Infinity;
 
     HashSet<Unit> units;
 
@@ -91,12 +110,12 @@ public class Hex {
         }
 
         if(units.Remove(unit) == false) {
-            Debug.LogError("Unit not present!");
+            Debug.LogError("No unit to remove");
         }
     }
 
-    public float movementCost() {
-        return baseMovementCost;
+    public float getMovementCost() {
+        return movementCost;
     }
 
     public Unit[] getUnitArray() {
@@ -127,7 +146,68 @@ public class Hex {
         return ("(" + this.Q + "," + this.R + ")");
     }
 
-    public void setBaseMovementCost(float newCost) {
-        baseMovementCost = newCost;
+    public void setTerrainType(TERRAIN_TYPE newterrain) {
+        this.terrainType = newterrain;
+        updateMovementCost();
     }
+
+    public void setElevationType(ELEVATION_TYPE newelev) {
+        this.elevationType = newelev;
+        updateMovementCost();
+    }
+
+    public void setFeature(FEATURE_TYPE newfeature) {
+        this.featureType = newfeature;
+        updateMovementCost();
+    }
+
+    public TERRAIN_TYPE getTerrainType () {
+        return terrainType;
+    }
+
+    public ELEVATION_TYPE getElevationType () {
+        return elevationType;
+    }
+
+    public FEATURE_TYPE getFeatureType() {
+        return featureType;
+    }
+
+    //updates this tile's movement cost based on its type and features
+    //shouldn't need to ever call this from outside this class since setters should call it
+    public void updateMovementCost() {
+        movementCost = BASE_MOVECOST;
+
+        //check the elevation
+        switch (elevationType) {
+        case ELEVATION_TYPE.FLAT:
+            break;
+        case ELEVATION_TYPE.HILL:
+            movementCost = HILL_MOVECOST;
+            break;
+        case ELEVATION_TYPE.MOUNTAIN:
+            movementCost = MOUNTAIN_MOVECOST;
+            break;
+        case ELEVATION_TYPE.WATER:
+            movementCost = WATER_MOVECOST;
+            break;
+        }
+
+        //check feature.
+        switch (featureType) {
+        case FEATURE_TYPE.NONE:
+            break;
+        case FEATURE_TYPE.RAINFOREST:
+            movementCost = Mathf.Max(movementCost, RAINFOREST_MOVECOST);
+            break;
+        case FEATURE_TYPE.FOREST:
+            movementCost = Mathf.Max(movementCost, FOREST_MOVECOST);
+            break;
+        }
+
+        //this is where we will add checks for improvements, etc.
+
+    }
+
+
 }

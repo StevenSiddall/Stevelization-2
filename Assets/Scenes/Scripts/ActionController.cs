@@ -106,7 +106,7 @@ public class ActionController : MonoBehaviour
         lineRenderer.enabled = true;
 
         Vector3[] positions = new Vector3[path.Length + 1];
-        positions[0] = hexMap.getGOFromHex(selectedUnit.hex).transform.position;
+        positions[0] = hexMap.getGOFromHex(selectedUnit.hex).transform.position + Vector3.up * .1f;
         for(int i = 1; i < path.Length + 1; i++) {
             GameObject hexGO = hexMap.getGOFromHex(path[i - 1]);
             positions[i] = hexGO.transform.position + Vector3.up*.1f;
