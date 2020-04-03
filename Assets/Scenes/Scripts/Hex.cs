@@ -55,6 +55,8 @@ public class Hex {
         this.Q = q;
         this.R = r;
         this.S = -(q + r);
+
+        units = new HashSet<Unit>();
     }
 
     /*

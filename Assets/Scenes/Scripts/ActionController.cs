@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO: style: factor out mouse and action stuff into different files
 public class ActionController : MonoBehaviour
 {
     public static readonly float MAX_ZOOMOUT = 20; //farthest they can zoom out
@@ -13,6 +14,9 @@ public class ActionController : MonoBehaviour
 
     public static readonly int BUTTON_LEFTMOUSE = 0;
     public static readonly int BUTTON_RIGHTMOUSE = 1;
+
+    //so we can update the UI
+    UIController uiController;
 
     //general bookkeeping
     Hex hexUnderMouse;
@@ -38,6 +42,7 @@ public class ActionController : MonoBehaviour
         update_CurrentFunc = update_DetectModeStart;
         hexMap = GameObject.FindObjectOfType<HexMap>();
         lineRenderer = transform.GetComponentInChildren<LineRenderer>();
+        uiController = FindObjectOfType<UIController>().GetComponent<UIController>();
     }
 
     void Update() {
@@ -170,17 +175,23 @@ public class ActionController : MonoBehaviour
             return;
         }
 
-        //TODO: update UI elements
         Debug.Log("Hex selected");
         Unit[] units = hexUnderMouse.getUnitArray();
         if (units == null || units.Length == 0) {
             //no unit present -- deselect
             selectedUnit = null;
+            uiController.updateSelection(selectedUnit);
             return;
         }
 
         //select the unit on the hex 
         selectedUnit = units[0];
+
+        uiController.updateSelection(selectedUnit);
+    }
+
+    public Unit getSelectedUnit() {
+        return selectedUnit;
     }
 
     private Vector3 mouseToGroundPlane(Vector3 mousePos) {
