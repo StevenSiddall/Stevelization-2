@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit {
+    public UnitView unitView;
+
     public static readonly Vector3 FLATHEIGHT = Vector3.down * .3f;
     public Hex hex { get; protected set; }
 
     public string name = "No name";
-    public int hitPoints = 100;
-    public int strength = 8;
-    public int movement = 2;
-    public int movementRemaining = 2;
+    public float hitPoints = 100f;
+    public float strength = 8f;
+    public float movement = 2f;
+    public float movementRemaining = 2f;
 
     Queue<Hex> hexPath;
 
@@ -43,21 +45,34 @@ public class Unit {
         this.hexPath = new Queue<Hex>(hexPath);
     }
 
-    public void doTurn() {
+    public bool move() {
         //pop first hex from queue (if present)
         if(hexPath == null || hexPath.Count == 0) {
-            return;
+            return false;
         }
 
         Hex newHex = hexPath.Dequeue();
         setHex(newHex);
+        return canMoveAgain();
+    }
+
+    public bool canMoveAgain() {
+        return (movementRemaining > 0 && hexPath != null && hexPath.Count > 0 && movementRemaining >= hexPath.Peek().getMovementCost());
+    }
+
+    public float getUnitSpeed() {
+        return unitView.currentVelocity.magnitude;
+    }
+
+    public float distFromNextHex() {
+        return Vector3.Distance(unitView.oldPos, unitView.newPos);
     }
 
     public float movementCostToEnterHex(Hex hex) {
-        //TODO: factor in movement mode
         return hex.getMovementCost();
     }
 
+    //TODO: revisit this: might be necessary for perfect pathfinding -- not used currently
     // turn cost != movement cost
     public float aggregateTurnsToEnterHex(Hex hex, float turnsToDate) {
         float baseTurnsToEnterHex = movementCostToEnterHex(hex) / movement; //ex. entering forest is "1" turn

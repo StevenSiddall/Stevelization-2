@@ -23,16 +23,6 @@ public class HexMap : MonoBehaviour {
         GenerateMap();
     }
 
-    void Update() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            if(units != null) {
-                foreach(Unit u in units) {
-                    u.doTurn();
-                }
-            }
-        }
-    }
-
     //terrain stuff
     public GameObject hexPrefab;
 
@@ -62,7 +52,6 @@ public class HexMap : MonoBehaviour {
     //unit stuff
     public GameObject unitFootsoldierPrefab;
 
-    public Unit selectedUnit;
     private HashSet<Unit> units;
     private Dictionary<Unit, GameObject> unitToGOMap;
 
@@ -246,6 +235,10 @@ public class HexMap : MonoBehaviour {
         return null;
     }
 
+    public HashSet<Unit> getUnits() {
+        return units;
+    }
+
     public void spawnUnitAt(Unit unit, GameObject prefab, int q, int r) {
         if(units == null) {
             units = new HashSet<Unit>();
@@ -256,7 +249,9 @@ public class HexMap : MonoBehaviour {
         unit.setHex(getHex(q, r));
 
         GameObject unitGO = Instantiate(prefab, unitHex.transform.position, Quaternion.identity, unitHex.transform);
-        unit.onUnitMoved += unitGO.GetComponent<UnitView>().onUnitMoved;
+        UnitView unitView = unitGO.GetComponent<UnitView>();
+        unit.unitView = unitView;
+        unit.onUnitMoved += unitView.onUnitMoved;
 
         units.Add(unit);
         unitToGOMap[unit] = unitGO;

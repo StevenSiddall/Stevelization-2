@@ -17,6 +17,7 @@ public class ActionController : MonoBehaviour
 
     //so we can update the UI
     UIController uiController;
+    TurnController turnController;
 
     //general bookkeeping
     Hex hexUnderMouse;
@@ -42,7 +43,8 @@ public class ActionController : MonoBehaviour
         update_CurrentFunc = update_DetectModeStart;
         hexMap = GameObject.FindObjectOfType<HexMap>();
         lineRenderer = transform.GetComponentInChildren<LineRenderer>();
-        uiController = FindObjectOfType<UIController>().GetComponent<UIController>();
+        uiController = FindObjectOfType<UIController>();
+        turnController = FindObjectOfType<TurnController>();
     }
 
     void Update() {
@@ -91,6 +93,7 @@ public class ActionController : MonoBehaviour
             //queue movement for unit
             if(selectedUnit != null) {
                 selectedUnit.setHexPath(hexPath);
+                StartCoroutine(turnController.doUnitMovement(selectedUnit));
             }
 
             cancelUpdateFunc();
@@ -213,6 +216,11 @@ public class ActionController : MonoBehaviour
     }
 
     private Hex mouseToHex() {
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
+            //cursor is hovering over UI element
+            return null;
+        }
+
         Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hitInfo;
 
