@@ -14,6 +14,8 @@ public class Unit {
     public float movement = 2f;
     public float movementRemaining = 2f;
 
+    public bool canBuildCities = false;
+
     Queue<Hex> hexPath;
 
     public delegate void UnitMovedDelegate(Hex oldHex, Hex newHex);

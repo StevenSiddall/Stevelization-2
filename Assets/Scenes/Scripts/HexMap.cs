@@ -51,6 +51,7 @@ public class HexMap : MonoBehaviour {
 
     //unit stuff
     public GameObject unitFootsoldierPrefab;
+    public GameObject cityPrefab;
 
     private HashSet<Unit> units;
     private Dictionary<Unit, GameObject> unitToGOMap;
@@ -255,5 +256,9 @@ public class HexMap : MonoBehaviour {
 
         units.Add(unit);
         unitToGOMap[unit] = unitGO;
+    }
+
+    public void spawnCityAt(City city, GameObject prefab, int q, int r) {
+
     }
 }

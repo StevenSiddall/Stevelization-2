@@ -71,6 +71,7 @@ public class HexMap_Continent : HexMap
         updateHexVisuals();
 
         Unit unit = new Unit();
+        unit.canBuildCities = true;
         spawnUnitAt(unit, unitFootsoldierPrefab, 62, 6);
 
     }

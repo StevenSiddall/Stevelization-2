@@ -10,6 +10,7 @@ public class UIController : MonoBehaviour
     TurnController turnController;
 
     Button nextButton;
+    Button buildCityButton;
 
     // Start is called before the first frame update
     void Start()
@@ -17,8 +18,11 @@ public class UIController : MonoBehaviour
         Canvas canvas = FindObjectOfType<Canvas>();
         infoPanelBehavior = canvas.GetComponentInChildren<InfoPanelBehavior>();
         infoPanel = infoPanelBehavior.gameObject;
-        nextButton = findButtonByName("NextTurnButton", GameObject.FindObjectsOfType<Button>());
         turnController = FindObjectOfType<TurnController>();
+
+        Button[] allButtons = GameObject.FindObjectsOfType<Button>();
+        nextButton = findButtonByName("NextTurnButton", allButtons);
+        buildCityButton = findButtonByName("BuildCityButton", allButtons);
 
         nextButton.onClick.AddListener(turnController.nextTurn);
         updateSelection(null); //disable info panel by default
