@@ -24,7 +24,6 @@ public class MouseController : MonoBehaviour
 
     //unit movement stuff
     Hex[] hexPath;
-    Unit selectedUnit;
     HexMap hexMap;
     public LayerMask LayerIDForHexTiles;
 
@@ -56,9 +55,9 @@ public class MouseController : MonoBehaviour
         update_ScrollZoom();
 
 
-        if(selectedUnit != null) {
+        if(actionController.getSelectedUnit() != null) {
             //draw path
-            uiController.drawPath( (hexPath != null) ? hexPath : selectedUnit.getHexPath());
+            uiController.drawPath( (hexPath != null) ? hexPath : actionController.getSelectedUnit().getHexPath());
         } else {
             uiController.drawPath(null);
         }
@@ -79,18 +78,18 @@ public class MouseController : MonoBehaviour
             lastMouseGroundPlanePos = mouseToGroundPlane(Input.mousePosition);
             update_CurrentFunc = update_clickAndDrag;
             update_CurrentFunc();
-        } else if (selectedUnit != null && Input.GetMouseButton(BUTTON_RIGHTMOUSE)) {
+        } else if (actionController.getSelectedUnit() != null && Input.GetMouseButton(BUTTON_RIGHTMOUSE)) {
             //right clicked somewhere -- tell action controller
             update_CurrentFunc = update_UnitMovement;
         }
     }
 
     void update_UnitMovement() {
-        if(Input.GetMouseButtonUp(BUTTON_RIGHTMOUSE) || selectedUnit == null) {
+        if(Input.GetMouseButtonUp(BUTTON_RIGHTMOUSE) || actionController.getSelectedUnit() == null) {
             //queue movement for unit
-            if(selectedUnit != null) {
-                selectedUnit.setHexPath(hexPath);
-                StartCoroutine(actionController.doUnitMovement(selectedUnit));
+            if(actionController.getSelectedUnit() != null) {
+                actionController.getSelectedUnit().setHexPath(hexPath);
+                StartCoroutine(actionController.doUnitMovement(actionController.getSelectedUnit()));
             }
 
             cancelUpdateFunc();
@@ -99,7 +98,7 @@ public class MouseController : MonoBehaviour
 
         if(Input.GetMouseButton(BUTTON_RIGHTMOUSE) && (hexPath == null || hexUnderMouse != lastHexUnderMouse)) {
             // calculate route to hex under mouse
-            hexPath = HexPathfinder.getPath(selectedUnit.hex, hexUnderMouse);
+            hexPath = HexPathfinder.getPath(actionController.getSelectedUnit().hex, hexUnderMouse);
         }
     }
 
@@ -161,19 +160,15 @@ public class MouseController : MonoBehaviour
         Unit[] units = hexUnderMouse.getUnitArray();
         if (units == null || units.Length == 0) {
             //no unit present -- deselect
-            selectedUnit = null;
-            uiController.updateSelection(selectedUnit);
+            actionController.selectUnit(null);
+            uiController.updateSelection(null);
             return;
         }
 
         //select the unit on the hex 
-        selectedUnit = units[0];
+        actionController.selectUnit(units[0]);
 
-        uiController.updateSelection(selectedUnit);
-    }
-
-    public Unit getSelectedUnit() {
-        return selectedUnit;
+        uiController.updateSelection(actionController.getSelectedUnit());
     }
 
     private Vector3 mouseToGroundPlane(Vector3 mousePos) {

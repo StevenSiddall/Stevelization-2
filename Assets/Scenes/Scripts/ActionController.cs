@@ -8,6 +8,8 @@ public class ActionController : MonoBehaviour
     public bool animationIsPlaying = false;
 
     HexMap hexMap;
+    Unit selectedUnit;
+
     UIController uiController;
     MouseController mouseController;
 
@@ -22,7 +24,7 @@ public class ActionController : MonoBehaviour
         HashSet<Unit> units = hexMap.getUnits();
         moveUnits(units);
         replenishUnitMovement(units);
-        uiController.updateSelection(mouseController.getSelectedUnit());
+        uiController.updateSelection(selectedUnit);
     }
 
     public void replenishUnitMovement(HashSet<Unit> units) {
@@ -47,10 +49,16 @@ public class ActionController : MonoBehaviour
                 yield return null; //wait for animation to get close to finishing
             }
             unit.movementRemaining -= unit.hex.getMovementCost();
-            uiController.updateSelection(mouseController.getSelectedUnit());
+            uiController.updateSelection(selectedUnit);
             animationIsPlaying = false;
         }
+    }
 
-        
+    public void selectUnit(Unit unit) {
+        selectedUnit = unit;
+    }
+
+    public Unit getSelectedUnit() {
+        return selectedUnit;
     }
 }
