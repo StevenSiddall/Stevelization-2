@@ -8,7 +8,7 @@ public class UnitView : MonoBehaviour {
     public static readonly int RUNNING_ANIMLAYER = 1; //layer for the running animation
     public static readonly float MAX_ANIM_WAIT_DIST = 0.2f; //distance from next tile above which move animations halt execution
 
-    TurnController turnController;
+    ActionController actionController;
 
     public Vector3 oldPos;
     public Vector3 newPos;
@@ -25,14 +25,14 @@ public class UnitView : MonoBehaviour {
 
     void Start() {
         oldPos = newPos = this.transform.position + Unit.FLATHEIGHT;
-        turnController = FindObjectOfType<TurnController>();
+        actionController = FindObjectOfType<ActionController>();
     }
 
     void Update() {
         if(Vector3.Distance(newPos, this.transform.position) <= MAX_SMOOTHMOVE_DIST) {
             this.transform.position = Vector3.SmoothDamp(this.transform.position, newPos, ref currentVelocity, smoothTime);
             this.gameObject.GetComponentInChildren<Animator>().SetLayerWeight(RUNNING_ANIMLAYER, currentVelocity.magnitude / MAX_EXPECTED_VELO);
-            turnController.animationIsPlaying = (Vector3.Distance(this.transform.position, newPos) > MAX_ANIM_WAIT_DIST);
+            actionController.animationIsPlaying = (Vector3.Distance(this.transform.position, newPos) > MAX_ANIM_WAIT_DIST);
         }
         
     }

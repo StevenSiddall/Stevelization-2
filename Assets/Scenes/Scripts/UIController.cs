@@ -5,26 +5,36 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    HexMap hexMap;
+
     GameObject infoPanel;
     InfoPanelBehavior infoPanelBehavior;
-    TurnController turnController;
+    ActionController actionController;
+    MouseController mouseController;
 
     Button nextButton;
     Button buildCityButton;
 
+    LineRenderer lineRenderer;
+
     // Start is called before the first frame update
     void Start()
     {
+        hexMap = GameObject.FindObjectOfType<HexMap>();
+
         Canvas canvas = FindObjectOfType<Canvas>();
         infoPanelBehavior = canvas.GetComponentInChildren<InfoPanelBehavior>();
         infoPanel = infoPanelBehavior.gameObject;
-        turnController = FindObjectOfType<TurnController>();
+        actionController = FindObjectOfType<ActionController>();
+        mouseController = FindObjectOfType<MouseController>();
 
         Button[] allButtons = GameObject.FindObjectsOfType<Button>();
         nextButton = findButtonByName("NextTurnButton", allButtons);
         buildCityButton = findButtonByName("BuildCityButton", allButtons);
 
-        nextButton.onClick.AddListener(turnController.nextTurn);
+        lineRenderer = transform.GetComponentInChildren<LineRenderer>();
+
+        nextButton.onClick.AddListener(actionController.nextTurn);
         updateSelection(null); //disable info panel by default
     }
 
@@ -35,6 +45,24 @@ public class UIController : MonoBehaviour
         } else {
             infoPanel.SetActive(false);
         }
+    }
+
+    public void drawPath(Hex[] path) {
+        if (path == null || path.Length == 0) {
+            lineRenderer.enabled = false;
+            return;
+        }
+        lineRenderer.enabled = true;
+
+        Vector3[] positions = new Vector3[path.Length + 1];
+        positions[0] = hexMap.getGOFromHex(mouseController.getSelectedUnit().hex).transform.position + Vector3.up * .1f;
+        for (int i = 1; i < path.Length + 1; i++) {
+            GameObject hexGO = hexMap.getGOFromHex(path[i - 1]);
+            positions[i] = hexGO.transform.position + Vector3.up * .1f;
+        }
+
+        lineRenderer.positionCount = positions.Length;
+        lineRenderer.SetPositions(positions);
     }
 
     private Button findButtonByName(string btnName, Button[] btns) {
