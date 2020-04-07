@@ -56,6 +56,9 @@ public class HexMap : MonoBehaviour {
     private HashSet<Unit> units;
     private Dictionary<Unit, GameObject> unitToGOMap;
 
+    private HashSet<City> cities;
+    private Dictionary<City, GameObject> cityToGOMap;
+
     public Hex getHex(int q, int r) {
         if(hexes == null) {
             Debug.LogError("Hexes array not yet instantiated");
@@ -246,19 +249,37 @@ public class HexMap : MonoBehaviour {
             unitToGOMap = new Dictionary<Unit, GameObject>();
         }
 
-        GameObject unitHex = hexToGOMap[getHex(q, r)];
+        GameObject unitHexGO = hexToGOMap[getHex(q, r)];
         unit.setHex(getHex(q, r));
 
-        GameObject unitGO = Instantiate(prefab, unitHex.transform.position, Quaternion.identity, unitHex.transform);
+        GameObject unitGO = Instantiate(prefab, unitHexGO.transform.position, Quaternion.identity, unitHexGO.transform);
         UnitView unitView = unitGO.GetComponent<UnitView>();
         unit.unitView = unitView;
-        unit.onUnitMoved += unitView.onUnitMoved;
+        unit.onObjectMoved += unitView.onUnitMoved;
 
         units.Add(unit);
         unitToGOMap[unit] = unitGO;
     }
 
     public void spawnCityAt(City city, GameObject prefab, int q, int r) {
+        if (cities == null) {
+            cities = new HashSet<City>();
+            cityToGOMap = new Dictionary<City, GameObject>();
+        }
 
+        Hex cityHex = getHex(q, r);
+        GameObject cityHexGO = hexToGOMap[cityHex];
+
+        try {
+            city.setHex(cityHex);
+        } catch (UnityException e) {
+            Debug.LogError(e.Message);
+            return;
+        }
+
+        GameObject cityGO = Instantiate(prefab, cityHexGO.transform.position, Quaternion.identity, cityHexGO.transform);
+
+        cities.Add(city);
+        cityToGOMap[city] = cityGO;
     }
 }

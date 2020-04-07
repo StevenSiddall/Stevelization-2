@@ -2,11 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class City {
-    public string name = "a city";
-    public float hitPoints = 100;
+public class City : MapObject {
 
     public City() {
+        name = "a city";
+        hitPoints = 100f;
+    }
 
+    public override void setHex(Hex newHex) {
+        if(hex != null) {
+            hex.removeCity();
+        }
+
+        base.setHex(newHex);
+
+        hex.addCity(this);
     }
 }

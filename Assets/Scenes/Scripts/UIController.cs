@@ -35,6 +35,7 @@ public class UIController : MonoBehaviour
         lineRenderer = transform.GetComponentInChildren<LineRenderer>();
 
         nextButton.onClick.AddListener(actionController.nextTurn);
+        buildCityButton.onClick.AddListener(actionController.buildCity);
         updateSelection(null); //disable info panel by default
     }
 

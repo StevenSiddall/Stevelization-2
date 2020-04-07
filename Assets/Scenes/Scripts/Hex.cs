@@ -31,6 +31,9 @@ public class Hex {
 
     public readonly HexMap hexMap;
 
+    HashSet<Unit> units;
+    public City city { get; protected set; }
+
     //terrain stuff
     public float elevation;
     public float moisture;
@@ -47,8 +50,6 @@ public class Hex {
 
 
     private float movementCost = Mathf.Infinity;
-
-    HashSet<Unit> units;
 
     public Hex(HexMap hexmap, int q, int r) {
         this.hexMap = hexmap;
@@ -104,6 +105,22 @@ public class Hex {
         }
 
         units.Add(unit);
+    }
+
+    public void addCity(City newCity) {
+        if(this.city != null) {
+            throw new UnityException("Trying to add a city to a tile that already has one! UI shouldn't allow this!");
+        }
+
+        this.city = newCity;
+    }
+
+    public void removeCity() {
+        if(this.city == null) {
+            Debug.LogError("Trying to remove a city that isn't present!");
+        }
+
+        this.city = null;
     }
 
     public void removeUnit(Unit unit) {

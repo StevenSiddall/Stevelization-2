@@ -21,6 +21,10 @@ public class ActionController : MonoBehaviour
     }
 
     public void nextTurn() {
+        if (animationIsPlaying) {
+            return;
+        }
+
         HashSet<Unit> units = hexMap.getUnits();
         moveUnits(units);
         replenishUnitMovement(units);
@@ -42,6 +46,10 @@ public class ActionController : MonoBehaviour
     }
 
     public IEnumerator doUnitMovement(Unit unit) {
+        if (animationIsPlaying) {
+            yield break;
+        }
+
         while (unit.canMoveAgain()) {
             animationIsPlaying = true;
             unit.move();
@@ -60,5 +68,15 @@ public class ActionController : MonoBehaviour
 
     public Unit getSelectedUnit() {
         return selectedUnit;
+    }
+
+    public void buildCity() {
+        if (animationIsPlaying) {
+            return;
+        }
+
+        City city = new City();
+        hexMap.spawnCityAt(city, hexMap.cityPrefab, selectedUnit.hex.Q, selectedUnit.hex.R);
+        uiController.updateSelection(selectedUnit);
     }
 }

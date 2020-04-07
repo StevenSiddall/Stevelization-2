@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Unit {
+public class Unit : MapObject {
     public UnitView unitView;
 
     public static readonly Vector3 FLATHEIGHT = Vector3.down * .3f;
-    public Hex hex { get; protected set; }
-
-    public string name = "No name";
-    public float hitPoints = 100f;
+    
     public float strength = 8f;
     public float movement = 2f;
     public float movementRemaining = 2f;
@@ -18,22 +15,14 @@ public class Unit {
 
     Queue<Hex> hexPath;
 
-    public delegate void UnitMovedDelegate(Hex oldHex, Hex newHex);
-
-    public event UnitMovedDelegate onUnitMoved;
-
-    public void setHex(Hex newHex) {
-        Hex oldHex = this.hex;
-        if(this.hex != null) {
+    override public void setHex(Hex newHex) {
+        if (this.hex != null) {
             this.hex.removeUnit(this);
         }
 
-        this.hex = newHex;
-        this.hex.addUnit(this);
+        base.setHex(newHex);
 
-        if(onUnitMoved != null) {
-            onUnitMoved(oldHex, newHex);
-        }
+        this.hex.addUnit(this);
     }
 
     public Hex[] getHexPath() {

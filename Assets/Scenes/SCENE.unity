@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 77215211}
   - component: {fileID: 77215212}
+  - component: {fileID: 77215213}
   m_Layer: 5
   m_Name: UnitActionBar
   m_TagString: Untagged
@@ -172,6 +173,19 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
+--- !u!114 &77215213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 77215210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 532e5a7ececeb764f9ec8794e32a866d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildCityButton: {fileID: 2099709715}
 --- !u!1 &135014114
 GameObject:
   m_ObjectHideFlags: 0
@@ -899,7 +913,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: {fileID: 536803967}
   movement: {fileID: 1691251495}
-  buildCityButton: {fileID: 2099709715}
 --- !u!1 &970714572
 GameObject:
   m_ObjectHideFlags: 0
@@ -1139,7 +1152,8 @@ MonoBehaviour:
   matDesert: {fileID: 2100000, guid: 3b1696625f5194445a4c6f90b087c81e, type: 2}
   unitFootsoldierPrefab: {fileID: 601361201574675800, guid: 95fe6214b6155734e975773dae2fd7a5,
     type: 3}
-  cityPrefab: {fileID: 0}
+  cityPrefab: {fileID: 8709015068576825131, guid: c417888dbb7b435449a2a5119f2a221c,
+    type: 3}
 --- !u!4 &1654146045
 Transform:
   m_ObjectHideFlags: 0
