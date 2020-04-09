@@ -17,12 +17,6 @@ public class HexMap : MonoBehaviour {
 
     public readonly float INIT_ELEVATION = -0.35f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        GenerateMap();
-    }
-
     //terrain stuff
     public GameObject hexPrefab;
 
@@ -58,6 +52,16 @@ public class HexMap : MonoBehaviour {
 
     private HashSet<City> cities;
     private Dictionary<City, GameObject> cityToGOMap;
+
+    //event stuff
+    public delegate void cityCreatedDelegate(City city, GameObject cityGO);
+    public event cityCreatedDelegate onCityCreated;
+
+    // Start is called before the first frame update
+    void Start() {
+        GenerateMap();
+    }
+
 
     public Hex getHex(int q, int r) {
         if(hexes == null) {
@@ -281,5 +285,9 @@ public class HexMap : MonoBehaviour {
 
         cities.Add(city);
         cityToGOMap[city] = cityGO;
+
+        if(onCityCreated != null) {
+            onCityCreated(city, cityGO);
+        }
     }
 }
