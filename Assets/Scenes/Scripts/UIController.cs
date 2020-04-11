@@ -8,7 +8,7 @@ public class UIController : MonoBehaviour
     HexMap hexMap;
 
     GameObject infoPanel;
-    InfoPanelBehavior infoPanelBehavior;
+    UnitInfoPanelBehavior infoPanelBehavior;
     ActionController actionController;
     MouseController mouseController;
 
@@ -22,7 +22,7 @@ public class UIController : MonoBehaviour
     {
         hexMap = GameObject.FindObjectOfType<HexMap>();
 
-        infoPanelBehavior = GameObject.Find("Canvas_GameUI").GetComponentInChildren<InfoPanelBehavior>();
+        infoPanelBehavior = GameObject.Find("Canvas_GameUI").GetComponentInChildren<UnitInfoPanelBehavior>();
         infoPanel = infoPanelBehavior.gameObject;
         actionController = FindObjectOfType<ActionController>();
         mouseController = FindObjectOfType<MouseController>();

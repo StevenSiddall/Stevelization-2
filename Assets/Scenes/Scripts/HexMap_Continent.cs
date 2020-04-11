@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#define FIX_RAND_SEED
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +27,9 @@ public class HexMap_Continent : HexMap
         int continentSpacing = numCols / numContinents;
 
         //generate each continent
+#if FIX_RAND_SEED
         Random.InitState(0);
+#endif
         for(int c = 0; c < numContinents; c++) {
             //generate raised area for land
             int numSplats = Random.Range( N_SPLATS_MIN, N_SPLATS_MAX );

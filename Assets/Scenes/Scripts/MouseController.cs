@@ -14,6 +14,8 @@ public class MouseController : MonoBehaviour
     public static readonly int BUTTON_LEFTMOUSE = 0;
     public static readonly int BUTTON_RIGHTMOUSE = 1;
 
+    bool mouseIsOverUIElement;
+
     //so we can update the UI
     UIController uiController;
     ActionController actionController;
@@ -45,6 +47,7 @@ public class MouseController : MonoBehaviour
 
     void Update() {
         hexUnderMouse = mouseToHex();
+        mouseIsOverUIElement = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
             cancelUpdateFunc();
@@ -85,7 +88,12 @@ public class MouseController : MonoBehaviour
     }
 
     void update_UnitMovement() {
-        if(Input.GetMouseButtonUp(BUTTON_RIGHTMOUSE) || actionController.getSelectedUnit() == null) {
+
+        if (mouseIsOverUIElement) {
+            return;
+        }
+
+        if (Input.GetMouseButtonUp(BUTTON_RIGHTMOUSE) || actionController.getSelectedUnit() == null) {
             //queue movement for unit
             if(actionController.getSelectedUnit() != null) {
                 actionController.getSelectedUnit().setHexPath(hexPath);
@@ -103,6 +111,11 @@ public class MouseController : MonoBehaviour
     }
 
     void update_ScrollZoom() {
+
+        if (mouseIsOverUIElement) {
+            return;
+        }
+
         this.lastMouseGroundPlanePos = mouseToGroundPlane(Input.mousePosition);
         //handle scrollwheel zooming
         float scrollAmount = Input.GetAxis("Mouse ScrollWheel");
@@ -112,6 +125,11 @@ public class MouseController : MonoBehaviour
     }
 
     private void handleZoom(Vector3 hitPos, float scrollAmount) {
+
+        if (mouseIsOverUIElement) {
+            return;
+        }
+
         //move camera towards hitpoint
         Vector3 dir = hitPos - Camera.main.transform.position;
         Vector3 p = Camera.main.transform.position;
@@ -190,8 +208,8 @@ public class MouseController : MonoBehaviour
     }
 
     private Hex mouseToHex() {
-        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) {
-            //cursor is hovering over UI element
+
+        if (mouseIsOverUIElement) {
             return null;
         }
 
