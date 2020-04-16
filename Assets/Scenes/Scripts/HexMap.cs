@@ -52,6 +52,7 @@ public class HexMap : MonoBehaviour {
 
     private HashSet<City> cities;
     private Dictionary<City, GameObject> cityToGOMap;
+    private Dictionary<GameObject, City> goToCityMap;
 
     //event stuff
     public delegate void cityCreatedDelegate(City city, GameObject cityGO);
@@ -243,6 +244,14 @@ public class HexMap : MonoBehaviour {
         return null;
     }
 
+    public City getCityFromGO(GameObject cityGO) {
+        if (goToCityMap.ContainsKey(cityGO)) {
+            return goToCityMap[cityGO];
+        }
+
+        return null;
+    }
+
     public HashSet<Unit> getUnits() {
         return units;
     }
@@ -269,6 +278,7 @@ public class HexMap : MonoBehaviour {
         if (cities == null) {
             cities = new HashSet<City>();
             cityToGOMap = new Dictionary<City, GameObject>();
+            goToCityMap = new Dictionary<GameObject, City>();
         }
 
         Hex cityHex = getHex(q, r);
@@ -285,6 +295,7 @@ public class HexMap : MonoBehaviour {
 
         cities.Add(city);
         cityToGOMap[city] = cityGO;
+        goToCityMap[cityGO] = city;
 
         if(onCityCreated != null) {
             onCityCreated(city, cityGO);

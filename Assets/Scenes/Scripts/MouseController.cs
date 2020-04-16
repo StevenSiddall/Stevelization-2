@@ -75,7 +75,7 @@ public class MouseController : MonoBehaviour
         } else if (Input.GetMouseButtonUp(BUTTON_LEFTMOUSE)) {
             //are we click on a tile with a unit?
             //Debug.Log("left click");
-            select();
+            actionController.select(hexUnderMouse);
         } else if (Input.GetMouseButton(BUTTON_LEFTMOUSE) && Input.mousePosition != lastMousePos) { // LMB is being held down
             // LMB held down and mouse moved -- camera drag
             lastMouseGroundPlanePos = mouseToGroundPlane(Input.mousePosition);
@@ -165,28 +165,6 @@ public class MouseController : MonoBehaviour
         }
         float rayLength = mouseRay.origin.y / mouseRay.direction.y;
         this.lastMouseGroundPlanePos = mouseRay.origin - (mouseRay.direction * rayLength);
-    }
-
-    void select() {
-        //TODO: decide whether to select unit, city, etc.
-        if (hexUnderMouse == null) {
-            Debug.Log("didn't find hex to select");
-            return;
-        }
-
-        Debug.Log("Hex selected");
-        Unit[] units = hexUnderMouse.getUnitArray();
-        if (units == null || units.Length == 0) {
-            //no unit present -- deselect
-            actionController.selectUnit(null);
-            uiController.updateSelection(null);
-            return;
-        }
-
-        //select the unit on the hex 
-        actionController.selectUnit(units[0]);
-
-        uiController.updateSelection(actionController.getSelectedUnit());
     }
 
     private Vector3 mouseToGroundPlane(Vector3 mousePos) {

@@ -3,7 +3,11 @@ guid: 9f5554f3cf7792148ae2d37630733444
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - cityNamePlatePrefab: {fileID: 3344226686761620011, guid: c640f949300aa564f8219d294cd3b279,
+      type: 3}
+  - actionController: {instanceID: 0}
+  - hexMap: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

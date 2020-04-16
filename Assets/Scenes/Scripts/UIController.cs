@@ -7,8 +7,11 @@ public class UIController : MonoBehaviour
 {
     HexMap hexMap;
 
-    GameObject infoPanel;
-    UnitInfoPanelBehavior infoPanelBehavior;
+    GameObject unitInfoPanel;
+    UnitInfoPanelBehavior unitInfoPanelBehavior;
+    GameObject cityInfoPanel;
+    CityInfoPanelBehavior cityInfoPanelBehavior;
+
     ActionController actionController;
     MouseController mouseController;
 
@@ -22,8 +25,10 @@ public class UIController : MonoBehaviour
     {
         hexMap = GameObject.FindObjectOfType<HexMap>();
 
-        infoPanelBehavior = GameObject.Find("Canvas_GameUI").GetComponentInChildren<UnitInfoPanelBehavior>();
-        infoPanel = infoPanelBehavior.gameObject;
+        unitInfoPanelBehavior = GameObject.Find("Canvas_GameUI").GetComponentInChildren<UnitInfoPanelBehavior>();
+        unitInfoPanel = unitInfoPanelBehavior.gameObject;
+        cityInfoPanelBehavior = GameObject.Find("Canvas_GameUI").GetComponentInChildren<CityInfoPanelBehavior>();
+        cityInfoPanel = cityInfoPanelBehavior.gameObject;
         actionController = FindObjectOfType<ActionController>();
         mouseController = FindObjectOfType<MouseController>();
 
@@ -35,15 +40,22 @@ public class UIController : MonoBehaviour
 
         nextButton.onClick.AddListener(actionController.nextTurn);
         buildCityButton.onClick.AddListener(actionController.buildCity);
-        updateSelection(null); //disable info panel by default
+        updateSelection(null, null); //disable info panel by default
     }
 
-    public void updateSelection(Unit unit) {
+    public void updateSelection(Unit unit, City city) {
         if(unit != null) {
-            infoPanel.SetActive(true);
-            infoPanelBehavior.updateSelection(unit);
+            unitInfoPanel.SetActive(true);
+            unitInfoPanelBehavior.updateSelection(unit);
         } else {
-            infoPanel.SetActive(false);
+            unitInfoPanel.SetActive(false);
+        }
+
+        if(city != null) {
+            cityInfoPanel.SetActive(true);
+            cityInfoPanelBehavior.updateSelection(city);
+        } else {
+            cityInfoPanel.SetActive(false);
         }
     }
 

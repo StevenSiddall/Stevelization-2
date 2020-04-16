@@ -1,16 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CityNamePlateController : MonoBehaviour
 {
 
     public GameObject cityNamePlatePrefab;
+    public ActionController actionController;
+    public HexMap hexMap;
 
     // Start is called before the first frame update
     void Start()
     {
         GameObject.FindObjectOfType<HexMap>().onCityCreated += createCityNamePlate;
+        actionController = GameObject.FindObjectOfType<ActionController>();
+        hexMap = GameObject.FindObjectOfType<HexMap>();
     }
 
     // Update is called once per frame
@@ -22,5 +27,6 @@ public class CityNamePlateController : MonoBehaviour
     public void createCityNamePlate(City city, GameObject cityGO) {
         GameObject nameGO = Instantiate(cityNamePlatePrefab, this.transform);
         nameGO.GetComponent<MapObjectNamePlate>().target = cityGO;
+        nameGO.GetComponentInChildren<Button>().onClick.AddListener(delegate { actionController.select(hexMap.getCityFromGO(cityGO)); });
     }
 }
