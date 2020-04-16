@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//TODO: switch city name plates (possibly other UI elements as well) to update
+//their visuals in the update() function instead of calling updates from here
+
 public class UIController : MonoBehaviour
 {
     HexMap hexMap;

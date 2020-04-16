@@ -26,7 +26,9 @@ public class CityNamePlateController : MonoBehaviour
 
     public void createCityNamePlate(City city, GameObject cityGO) {
         GameObject nameGO = Instantiate(cityNamePlatePrefab, this.transform);
-        nameGO.GetComponent<MapObjectNamePlate>().target = cityGO;
+        MapObjectNamePlate namePlateGO = nameGO.GetComponent<MapObjectNamePlate>();
+        namePlateGO.target = cityGO;
+        namePlateGO.GetComponentInChildren<Text>().text = city.name;
         nameGO.GetComponentInChildren<Button>().onClick.AddListener(delegate { actionController.select(hexMap.getCityFromGO(cityGO)); });
     }
 }
