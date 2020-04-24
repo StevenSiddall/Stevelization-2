@@ -58,8 +58,12 @@ public class HexMap : MonoBehaviour {
     public delegate void cityCreatedDelegate(City city, GameObject cityGO);
     public event cityCreatedDelegate onCityCreated;
 
+    //database
+    public Database database;
+
     // Start is called before the first frame update
     void Start() {
+        database = FindObjectOfType<Database>();
         GenerateMap();
     }
 

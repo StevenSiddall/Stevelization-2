@@ -24,16 +24,6 @@ public class Hex {
     static readonly float MOUNTAIN_MOVECOST = Mathf.Infinity; //cost of entering an unimproved mountain tile
     static readonly float WATER_MOVECOST = Mathf.Infinity; //cost of entering an unimproved water tile
 
-    //hexmap stuff
-    public readonly int Q;
-    public readonly int R;
-    public readonly int S;
-
-    public readonly HexMap hexMap;
-
-    HashSet<Unit> units;
-    public City city { get; protected set; }
-
     //terrain stuff
     public float elevation;
     public float moisture;
@@ -45,9 +35,22 @@ public class Hex {
     private TERRAIN_TYPE terrainType;
     private ELEVATION_TYPE elevationType;
     private FEATURE_TYPE featureType;
-    //TODO: add a list of modifiers -- includes improvements, buildings, etc.
-    //TODO: add data about owner, population, etc
 
+    //hexmap stuff
+    public readonly int Q;
+    public readonly int R;
+    public readonly int S;
+
+    public readonly HexMap hexMap;
+
+    HashSet<Unit> units;
+    public City city { get; protected set; }
+
+    //specialization stuff
+    public enum SPECIALIZATION_TYPE { FARMLAND, MINING, FORESTRY, TOWN, MILITARY }
+    public enum OUTPUT_TYPE { FOOD, RAW_MATERIALS }
+
+    private float[] baseOutputs;
 
     private float movementCost = Mathf.Infinity;
 

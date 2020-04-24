@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<BuildingCollection>
+	<Buildings>
+		<Building name="Windmill">
+			<Specialization>Farmland</Specialization>
+			<Food>1.25</Food>
+			<RawMaterials>1</RawMaterials>
+		</Building>
+		<Building name="Smelter">
+			<Specialization>Mining</Specialization>
+			<Food>1</Food>
+			<RawMaterials>1.15</RawMaterials>
+		</Building>
+		<Building name="Sawmill">
+			<Specialization>Forestry</Specialization>
+			<Food>1</Food>
+			<RawMaterials>1.2</RawMaterials>
+		</Building>
+		<Building name="Butcher">
+			<Specialization>Town</Specialization>
+			<Food>1.3</Food>
+			<RawMaterials>1</RawMaterials>
+		</Building>
+		<Building name="Blacksmith">
+			<Specialization>Town</Specialization>
+			<Food>1</Food>
+			<RawMaterials>1.1</RawMaterials>
+		</Building>
+		<Building name="Watchtower">
+			<Specialization>Military</Specialization>
+			<Food>1</Food>
+			<RawMaterials>1</RawMaterials>
+		</Building>
+	</Buildings>
+</BuildingCollection>
