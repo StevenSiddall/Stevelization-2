@@ -4,7 +4,6 @@ using System.Collections.Generic;
 abstract public class MapObject {
 
     public string name = "No name";
-    public float hitPoints = 100f;
 
     public Hex hex { get; protected set; }
 

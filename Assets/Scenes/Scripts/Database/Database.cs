@@ -12,8 +12,8 @@ public class Database : MonoBehaviour {
     public void Start() {
         loadBuildings();
 
-        print("Buildings Loaded: ");
-        printBuildings();
+        //print("Buildings Loaded: ");
+        //printBuildings();
     }
 
     public void printBuildings() {

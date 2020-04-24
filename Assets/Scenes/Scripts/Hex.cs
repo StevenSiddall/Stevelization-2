@@ -9,20 +9,20 @@ using System.Linq;
  * */
 public class Hex {
 
-    static readonly float WIDTH_MULTIPLIER = Mathf.Sqrt(3) / 2f; //used to calculate height
-    static readonly float RADIUS = 1f;      //distance from center of hex to corner
-    static readonly float HEIGHT = RADIUS * 2f;      //vertical height of a hex (corner to opposite corner)
-    static readonly float WIDTH = WIDTH_MULTIPLIER * HEIGHT;        //distance from flat edge to opposite flat edge
-    static readonly float VERT_SPACING = HEIGHT * 0.75f;
-    static readonly float HORIZ_SPACING = WIDTH;
+    public static readonly float WIDTH_MULTIPLIER = Mathf.Sqrt(3) / 2f; //used to calculate height
+    public static readonly float RADIUS = 1f;      //distance from center of hex to corner
+    public static readonly float HEIGHT = RADIUS * 2f;      //vertical height of a hex (corner to opposite corner)
+    public static readonly float WIDTH = WIDTH_MULTIPLIER * HEIGHT;        //distance from flat edge to opposite flat edge
+    public static readonly float VERT_SPACING = HEIGHT * 0.75f;
+    public static readonly float HORIZ_SPACING = WIDTH;
 
     //unit movement stuff
-    static readonly float BASE_MOVECOST = 1f; //cost of entering an unimproved flat tile
-    static readonly float HILL_MOVECOST = 2f; //cost of entering an unimproved hill tile
-    static readonly float FOREST_MOVECOST = 2f; //cost of entering an unimproved forest tile
-    static readonly float RAINFOREST_MOVECOST = 2f; //cost of entering an unimproved rainforest tile
-    static readonly float MOUNTAIN_MOVECOST = Mathf.Infinity; //cost of entering an unimproved mountain tile
-    static readonly float WATER_MOVECOST = Mathf.Infinity; //cost of entering an unimproved water tile
+    public static readonly float BASE_MOVECOST = 1f; //cost of entering an unimproved flat tile
+    public static readonly float HILL_MOVECOST = 2f; //cost of entering an unimproved hill tile
+    public static readonly float FOREST_MOVECOST = 2f; //cost of entering an unimproved forest tile
+    public static readonly float RAINFOREST_MOVECOST = 2f; //cost of entering an unimproved rainforest tile
+    public static readonly float MOUNTAIN_MOVECOST = Mathf.Infinity; //cost of entering an unimproved mountain tile
+    public static readonly float WATER_MOVECOST = Mathf.Infinity; //cost of entering an unimproved water tile
 
     //terrain stuff
     public float elevation;
@@ -147,12 +147,12 @@ public class Hex {
     public Hex[] getNeighbors() {
         //TODO: what if this hex is at the north or south edge of the map
         Hex[] hexes = new Hex[6];
-        hexes[0] = hexMap.getHex(this.Q,        this.R - 1);
-        hexes[1] = hexMap.getHex(this.Q + 1,    this.R - 1);
-        hexes[2] = hexMap.getHex(this.Q + 1,    this.R);
-        hexes[3] = hexMap.getHex(this.Q,        this.R + 1);
-        hexes[4] = hexMap.getHex(this.Q - 1,    this.R + 1);
-        hexes[5] = hexMap.getHex(this.Q - 1,    this.R);
+        hexes[0] = hexMap.getHex(this.Q, this.R + 1); 
+        hexes[1] = hexMap.getHex(this.Q + 1, this.R); 
+        hexes[2] = hexMap.getHex(this.Q + 1, this.R - 1);
+        hexes[3] = hexMap.getHex(this.Q, this.R - 1);
+        hexes[4] = hexMap.getHex(this.Q - 1, this.R);
+        hexes[5] = hexMap.getHex(this.Q - 1, this.R + 1);
 
         List<Hex> neighbors = new List<Hex>();
         for(int i = 0; i < hexes.Length; i++) {

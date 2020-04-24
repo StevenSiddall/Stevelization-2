@@ -1,4 +1,4 @@
-﻿//#define DEBUG_LABELS
+﻿#define DEBUG_LABELS
 
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +18,8 @@ public class HexMap : MonoBehaviour {
     public readonly float INIT_ELEVATION = -0.35f;
 
     //terrain stuff
+    public enum DIRECTION {NORTHEAST, EAST, SOUTHEAST, SOUTHWEST, WEST, NORTHWEST}
+
     public GameObject hexPrefab;
 
     public Mesh meshWater;
