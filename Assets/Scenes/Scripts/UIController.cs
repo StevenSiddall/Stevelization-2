@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System;
 using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
@@ -26,6 +27,12 @@ public class UIController : MonoBehaviour
 
     public LineRenderer movementLineRenderer;
     public LineRenderer borderLineRenderer;
+
+    //useful constants for getting corner locations of a hex
+    private readonly float r = Hex.RADIUS;
+    private readonly float w = Hex.WIDTH / 2;
+    private readonly float z = Hex.RADIUS / 2;
+    private readonly float y = .01f;
 
     // Start is called before the first frame update
     void Start()
@@ -95,57 +102,114 @@ public class UIController : MonoBehaviour
         List<Vector3> positions = new List<Vector3>();
         HashSet<Vector3> posSet = new HashSet<Vector3>();
 
-        (Vector3, Vector3) corners = getCorners(HexMap.DIRECTION.NORTHEAST, hexes[1]);
-        Vector3[] c = new Vector3[2];
-        c[0] = corners.Item1;
-        c[1] = corners.Item2;
-        borderLineRenderer.positionCount = 2;
-        borderLineRenderer.SetPositions(c);
-
-        foreach(Hex h in hexes) {
-            print(h.coordsString());
-        }
         //loop through each hex that this city owns
-        /*foreach(Hex h in hexes) {
+        foreach(Hex h in hexes) {
             //check if this hex has any neighbors not owned by this city
+
+            //the order that we check the neighbors is very important.
+            //We need to start in the direction of the city center then
+            //move clockwise
+            //This probably only works if the hexes array is in clockwise order
+
+            //figure out which direction the city center is in
+            HexMap.DIRECTION dir = getCityDir(city.hex, h);
+
             Hex[] neighbors = h.getNeighbors();
-            foreach(Hex n in neighbors) {
-                if(!hexes.Contains<Hex>(n)){
+            print(h.coordsString() + ", " + Enum.GetName(typeof(HexMap.DIRECTION), dir));
+            for (int i = 0; i < 6; i++) {
+                Hex n = neighbors[(int) dir];
+                if(n != null && !hexSet.Contains<Hex>(n)) {
                     //set a line position on the corners that make the border
-                    (Vector3, Vector3) corners = getCorners(HexMap.DIRECTION)
+                    (Vector3, Vector3) corners = getCorners(dir, h);
+
+                    //round values to we don't miss duplicates due to floating point error
+                    corners.Item1.x = (float)Math.Round((Decimal)corners.Item1.x, 3, MidpointRounding.AwayFromZero);
+                    corners.Item1.y = (float)Math.Round((Decimal)corners.Item1.y, 3, MidpointRounding.AwayFromZero);
+                    corners.Item1.z = (float)Math.Round((Decimal)corners.Item1.z, 3, MidpointRounding.AwayFromZero);
+
+                    corners.Item2.x = (float)Math.Round((Decimal)corners.Item2.x, 3, MidpointRounding.AwayFromZero);
+                    corners.Item2.y = (float)Math.Round((Decimal)corners.Item2.y, 3, MidpointRounding.AwayFromZero);
+                    corners.Item2.z = (float)Math.Round((Decimal)corners.Item2.z, 3, MidpointRounding.AwayFromZero);
+
+                    //make sure we don't add duplicates
+                    if (!posSet.Contains(corners.Item1)) {
+                        positions.Add(corners.Item1);
+                        posSet.Add(corners.Item1);
+                    }
+
+                    if (!posSet.Contains(corners.Item2)) {
+                        positions.Add(corners.Item2);
+                        posSet.Add(corners.Item2);
+                    }
+
+                    dir = (HexMap.DIRECTION) (((int) dir + 1) % 6);
                 }
-
             }
+        }
 
-        }*/
+        borderLineRenderer.positionCount = positions.Count;
+        borderLineRenderer.loop = true;
+        borderLineRenderer.SetPositions(positions.ToArray());
     }
 
     //takes a hex and a direction and returns the two vectors of the positions of the
     //corners that make up the border between the hex and its neighbor in the given direction
     //in clockwise order around the city center
     private (Vector3, Vector3) getCorners(HexMap.DIRECTION d, Hex h) {
-        //for readability purposes
-        float r = Hex.RADIUS;
-        float w = Hex.WIDTH / 2;
-        float y = .01f;
+
+        Vector3 pos = hexMap.getGOFromHex(h).transform.position;
+
+        //vectors to get us the corner from the hex transform position
+        Vector3 n  = pos + new Vector3(0,  y, r);  //north
+        Vector3 ne = pos + new Vector3(w,  y, z);  //north east
+        Vector3 se = pos + new Vector3(w,  y, -z); //south east
+        Vector3 s  = pos + new Vector3(0,  y, -r); //south
+        Vector3 sw = pos + new Vector3(-w, y, -z); //south west
+        Vector3 nw = pos + new Vector3(-w, y, z);  //north west
 
         switch (d) {
             case HexMap.DIRECTION.NORTHEAST:
-                Vector3 corner1 = hexMap.getGOFromHex(h).transform.position + new Vector3(0,y,r);
-                Vector3 corner2 = hexMap.getGOFromHex(h).transform.position + new Vector3(w, y, .5f * r);
-                return (corner1, corner2);
-            /*case HexMap.DIRECTION.EAST:
-                break;
+                return (n, ne);
+            case HexMap.DIRECTION.EAST:
+                return (ne, se);
             case HexMap.DIRECTION.SOUTHEAST:
-                break;
+                return (se, s);
             case HexMap.DIRECTION.SOUTHWEST:
-                break;
+                return (s, sw);
             case HexMap.DIRECTION.WEST:
-                break;
+                return (sw, nw);
             case HexMap.DIRECTION.NORTHWEST:
-                break;*/
+                return (nw, n);
         }
         return (Vector3.zero, Vector3.zero);
+    }
+
+    private HexMap.DIRECTION getCityDir(Hex city, Hex h) {
+        Transform hexT = hexMap.getGOFromHex(h).transform;
+        Transform cityT = hexMap.getGOFromHex(city).transform;
+
+        float angle = Vector3.SignedAngle(hexT.right, hexT.position - cityT.position, hexT.up);
+        if(angle < 0) {
+            angle += 360;
+        }
+
+        if(angle > 270 && angle <= 330) {
+            return HexMap.DIRECTION.NORTHEAST;
+        } else if(angle > 330 || angle <= 30) {
+            return HexMap.DIRECTION.EAST;
+        } else if(angle > 30 && angle <= 90) {
+            return HexMap.DIRECTION.SOUTHEAST;
+        } else if(angle > 90 && angle <= 150) {
+            return HexMap.DIRECTION.SOUTHWEST;
+        } else if (angle > 150 && angle <= 210) {
+            return HexMap.DIRECTION.WEST;
+        } else if (angle > 210 && angle <= 270) {
+            return HexMap.DIRECTION.NORTHWEST;
+        } else {
+            Debug.LogError("Couldn't find angle between hex and city");
+            return 0;
+        }
+
     }
 
     private Button findButtonByName(string btnName, Button[] btns) {

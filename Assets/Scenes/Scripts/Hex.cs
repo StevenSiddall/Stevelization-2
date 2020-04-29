@@ -147,12 +147,12 @@ public class Hex {
     public Hex[] getNeighbors() {
         //TODO: what if this hex is at the north or south edge of the map
         Hex[] hexes = new Hex[6];
-        hexes[0] = hexMap.getHex(this.Q, this.R + 1); 
-        hexes[1] = hexMap.getHex(this.Q + 1, this.R); 
-        hexes[2] = hexMap.getHex(this.Q + 1, this.R - 1);
-        hexes[3] = hexMap.getHex(this.Q, this.R - 1);
-        hexes[4] = hexMap.getHex(this.Q - 1, this.R);
-        hexes[5] = hexMap.getHex(this.Q - 1, this.R + 1);
+        hexes[(int)HexMap.DIRECTION.NORTHEAST] = hexMap.getHex(this.Q, this.R + 1); 
+        hexes[(int)HexMap.DIRECTION.EAST] = hexMap.getHex(this.Q + 1, this.R); 
+        hexes[(int)HexMap.DIRECTION.SOUTHEAST] = hexMap.getHex(this.Q + 1, this.R - 1);
+        hexes[(int)HexMap.DIRECTION.SOUTHWEST] = hexMap.getHex(this.Q, this.R - 1);
+        hexes[(int)HexMap.DIRECTION.WEST] = hexMap.getHex(this.Q - 1, this.R);
+        hexes[(int)HexMap.DIRECTION.NORTHWEST] = hexMap.getHex(this.Q - 1, this.R + 1);
 
         List<Hex> neighbors = new List<Hex>();
         for(int i = 0; i < hexes.Length; i++) {
