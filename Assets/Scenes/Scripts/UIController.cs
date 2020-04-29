@@ -12,6 +12,8 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    public Material borderMaterial;
+
     HexMap hexMap;
 
     GameObject unitInfoPanel;
@@ -26,7 +28,8 @@ public class UIController : MonoBehaviour
     Button buildCityButton;
 
     public LineRenderer movementLineRenderer;
-    public LineRenderer borderLineRenderer;
+    public GameObject borderLineContainer;
+    public Dictionary<City, LineRenderer> borderLineRenderers;
 
     //useful constants for getting corner locations of a hex
     private readonly float r = Hex.RADIUS;
@@ -50,7 +53,8 @@ public class UIController : MonoBehaviour
         nextButton = findButtonByName("NextTurnButton", allButtons);
         buildCityButton = findButtonByName("BuildCityButton", allButtons);
 
-        borderLineRenderer.enabled = true;
+        borderLineRenderers = new Dictionary<City, LineRenderer>();
+
         hexMap.onCityCreated += updateCityBorder;
 
         nextButton.onClick.AddListener(actionController.nextTurn);
@@ -94,6 +98,32 @@ public class UIController : MonoBehaviour
 
     //redraws city borders according to hexes it owns
     public void updateCityBorder(City city, GameObject cityGO) {
+        //get line renderer for this city
+        LineRenderer borderLineRenderer;
+        if (!borderLineRenderers.ContainsKey(city)) {
+            GameObject lineGO = new GameObject("LineRenderer: " + city.name);
+            lineGO.transform.position = Vector3.zero;
+            lineGO.transform.parent = borderLineContainer.transform;
+            lineGO.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            lineGO.AddComponent<LineRenderer>();
+            LineRenderer lr = lineGO.GetComponent<LineRenderer>();
+            lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            lr.receiveShadows = false;
+            lr.allowOcclusionWhenDynamic = false;
+            lr.useWorldSpace = true;
+            lr.loop = true;
+            lr.positionCount = 0;
+            lr.alignment = LineAlignment.TransformZ;
+            lr.material = borderMaterial;
+            lr.startWidth = .1f;
+            lr.endWidth = .1f;
+            lr.enabled = true;
+
+            borderLineRenderers[city] = lr;
+        }
+        borderLineRenderer = borderLineRenderers[city];
+
+
         //need a hash set for fast set operations and an array because order matters
         Hex[] hexes = city.getHexes();
         HashSet<Hex> hexSet = new HashSet<Hex>(hexes);
