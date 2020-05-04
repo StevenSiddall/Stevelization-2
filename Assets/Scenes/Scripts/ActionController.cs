@@ -65,14 +65,18 @@ public class ActionController : MonoBehaviour
 
     public void selectUnit(Unit unit) {
         selectedUnit = unit;
+        selectedCity = null;
+        uiController.updateSelection(selectedUnit, selectedCity);
     }
 
     public void selectCity(City city) {
         selectedCity = city;
+        selectedUnit = null;
+        uiController.updateSelection(selectedUnit, selectedCity);
     }
 
     public void select(Hex hexUnderMouse) {
-        //TODO: decide whether to select unit, city, etc.
+
         if (hexUnderMouse == null) {
             Debug.Log("didn't find hex to select");
             return;
@@ -83,13 +87,12 @@ public class ActionController : MonoBehaviour
         if (units == null || units.Length == 0) {
             //no unit present -- deselect
             selectUnit(null);
-            selectCity(null);
-            uiController.updateSelection(selectedUnit, selectedCity);
+            print("No units present");
             return;
         }
 
         //check if we already have a unit selected
-        if(selectedUnit == null) {
+        if(selectedUnit == null || selectedUnit.hex != hexUnderMouse) {
             //no unit selected -- get the first one
             selectUnit(units[0]);
         } else {
@@ -108,20 +111,21 @@ public class ActionController : MonoBehaviour
                 selectUnit(units[0]);
             }
         }
-
-        selectCity(null); //deselect city
-
-        uiController.updateSelection(selectedUnit, selectedCity);
     }
 
-    public void select(City city) {
-        selectUnit(null); //deselect unit
-        selectCity(city);
-        uiController.updateSelection(selectedUnit, selectedCity);
+    public void renameCity(City city, string newName) {
+        if(city != null) {
+            city.name = newName;
+            uiController.updateSelection(this.selectedUnit, this.selectedCity);
+        }
     }
 
     public Unit getSelectedUnit() {
         return selectedUnit;
+    }
+
+    public City getSelectedCity() {
+        return selectedCity;
     }
 
     public void buildCity() {

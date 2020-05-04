@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 //TODO: switch city name plates (possibly other UI elements as well) to update
 //their visuals in the update() function instead of calling updates from here
@@ -13,6 +14,8 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     public Material borderMaterial;
+    public InputField cityInfoPanelNameText;
+
 
     HexMap hexMap;
 
@@ -30,6 +33,7 @@ public class UIController : MonoBehaviour
     public LineRenderer movementLineRenderer;
     public GameObject borderLineContainer;
     public Dictionary<City, LineRenderer> borderLineRenderers;
+    public Dictionary<City, MapObjectNamePlate> cityNamePlates;
 
     //useful constants for getting corner locations of a hex
     private readonly float r = Hex.RADIUS;
@@ -54,6 +58,7 @@ public class UIController : MonoBehaviour
         buildCityButton = findButtonByName("BuildCityButton", allButtons);
 
         borderLineRenderers = new Dictionary<City, LineRenderer>();
+        cityNamePlates = new Dictionary<City, MapObjectNamePlate>();
 
         hexMap.onCityCreated += updateCityBorder;
 
@@ -145,7 +150,7 @@ public class UIController : MonoBehaviour
             HexMap.DIRECTION dir = getCityDir(city.hex, h);
 
             Hex[] neighbors = h.getNeighbors();
-            print(h.coordsString() + ", " + Enum.GetName(typeof(HexMap.DIRECTION), dir));
+            //print(h.coordsString() + ", " + Enum.GetName(typeof(HexMap.DIRECTION), dir));
             for (int i = 0; i < 6; i++) {
                 Hex n = neighbors[(int) dir];
                 if(n != null && !hexSet.Contains<Hex>(n)) {
@@ -180,6 +185,22 @@ public class UIController : MonoBehaviour
         borderLineRenderer.positionCount = positions.Count;
         borderLineRenderer.loop = true;
         borderLineRenderer.SetPositions(positions.ToArray());
+    }
+
+    //part of the onClick for the input text on the city info panel
+    //set in editor
+    public void renameCity(string doNotUseMe) {
+        //for some reason the arg string isn't what the player typed in
+        //its the default string (empty)
+        string newName = cityInfoPanelNameText.GetComponent<InputField>().text;
+        City city = actionController.getSelectedCity();
+        actionController.renameCity(city, newName);
+        cityNamePlates[city].GetComponentInChildren<Text>().text = city.name;
+        print("city has been renamed to " + city.name);
+    }
+
+    public void mapCityToNameplate(City city, MapObjectNamePlate np) {
+        cityNamePlates[city] = np;
     }
 
     //takes a hex and a direction and returns the two vectors of the positions of the
