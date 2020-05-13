@@ -16,7 +16,6 @@ public class UIController : MonoBehaviour
     public Material borderMaterial;
     public InputField cityInfoPanelNameText;
 
-
     HexMap hexMap;
 
     GameObject unitInfoPanel;

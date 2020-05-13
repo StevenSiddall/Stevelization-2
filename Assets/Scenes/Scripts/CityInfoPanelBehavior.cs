@@ -6,17 +6,20 @@ using UnityEngine.UI;
 public class CityInfoPanelBehavior : MonoBehaviour
 {
     public Text cityName; //should be set in editor
+    public InputField nameInput;
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        nameInput = cityName.gameObject.GetComponent<InputField>();
+        print("start called");
     }
 
     public void updateSelection(City city) {
+        print("update selection called");
         if(city != null) {
-            cityName.text = city.name;
+            nameInput.text = city.name;
         }
     }
 }
