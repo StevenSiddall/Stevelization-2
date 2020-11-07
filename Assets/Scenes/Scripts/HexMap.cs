@@ -1,4 +1,4 @@
-﻿//#define DEBUG_LABELS
+﻿#define DEBUG_LABELS
 
 using System.Collections;
 using System.Collections.Generic;
@@ -57,7 +57,7 @@ public class HexMap : MonoBehaviour {
     private Dictionary<GameObject, City> goToCityMap;
 
     //event stuff
-    public delegate void cityCreatedDelegate(City city, GameObject cityGO);
+    public delegate void cityCreatedDelegate(City city, GameObject cityGO, Dictionary<City, GameObject> cityToGOMap, Dictionary<GameObject, City> goToCityMap);
     public event cityCreatedDelegate onCityCreated;
 
     //database
@@ -304,7 +304,7 @@ public class HexMap : MonoBehaviour {
         goToCityMap[cityGO] = city;
 
         if(onCityCreated != null) {
-            onCityCreated(city, cityGO);
+            onCityCreated(city, cityGO, cityToGOMap, goToCityMap);
         }
     }
 }

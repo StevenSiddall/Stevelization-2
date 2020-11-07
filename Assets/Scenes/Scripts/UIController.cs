@@ -40,6 +40,16 @@ public class UIController : MonoBehaviour
     private readonly float z = Hex.RADIUS / 2;
     private readonly float y = .01f;
 
+    //a blob represents a group of contiguous tiles from one or more of a player's cities
+    private struct Blob {
+        public City city { get; }
+        public HashSet<Hex> hexes { get; }
+        public Blob(City c, HashSet<Hex> h) {
+            city = c;
+            hexes = h;
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,7 +69,7 @@ public class UIController : MonoBehaviour
         borderLineRenderers = new Dictionary<City, LineRenderer>();
         cityNamePlates = new Dictionary<City, MapObjectNamePlate>();
 
-        hexMap.onCityCreated += updateCityBorder;
+        hexMap.onCityCreated += updateCityBorders;
 
         nextButton.onClick.AddListener(actionController.nextTurn);
         buildCityButton.onClick.AddListener(actionController.buildCity);
@@ -100,61 +110,81 @@ public class UIController : MonoBehaviour
         movementLineRenderer.SetPositions(positions);
     }
 
-    //redraws city borders according to hexes it owns
-    public void updateCityBorder(City city, GameObject cityGO) {
-        //get line renderer for this city
-        LineRenderer borderLineRenderer;
-        if (!borderLineRenderers.ContainsKey(city)) {
-            GameObject lineGO = new GameObject("LineRenderer: " + city.name);
-            lineGO.transform.position = Vector3.zero;
-            lineGO.transform.parent = borderLineContainer.transform;
-            lineGO.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-            lineGO.AddComponent<LineRenderer>();
-            LineRenderer lr = lineGO.GetComponent<LineRenderer>();
-            lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            lr.receiveShadows = false;
-            lr.allowOcclusionWhenDynamic = false;
-            lr.useWorldSpace = true;
-            lr.loop = true;
-            lr.positionCount = 0;
-            lr.alignment = LineAlignment.TransformZ;
-            lr.material = borderMaterial;
-            lr.startWidth = .1f;
-            lr.endWidth = .1f;
-            lr.enabled = true;
+    public void updateCityBorders(City city, GameObject cityGO, Dictionary<City, 
+                                    GameObject> cityToGOMap, Dictionary<GameObject, City> goToCityMap) {
+        List<Blob> blobs = new List<Blob>();
+        
+        //make sure each city has a line renderer and reset them all
+        //create a new blob for each city
+        List<City> cities = cityToGOMap.Keys.ToList<City>();
+        foreach(City c in cities) {
+            if (!borderLineRenderers.ContainsKey(c)) {
+                LineRenderer borderLineRenderer;
+                borderLineRenderer = getNewLineRenderer(c);
+                borderLineRenderers[c] = borderLineRenderer;
+            } else {
+                borderLineRenderers[c].enabled = false;
+            }
 
-            borderLineRenderers[city] = lr;
+            blobs.Add(new Blob(c, new HashSet<Hex>(c.getHexes())));
         }
-        borderLineRenderer = borderLineRenderers[city];
 
+        List<Blob> newBlobs = new List<Blob>();
+        bool[] merged = new bool[blobs.Count];
+        for(int i = 0; i < blobs.Count; i++) {
+            if (merged[i]) {
+                continue;
+            }
+            newBlobs.Add(blobs[i]);
+            bool somethingMerged;
+            do {
+                somethingMerged = false;
+                for (int j = i + 1; j < blobs.Count; j++) {
+                    Blob otherBlob = blobs[j];
+                    if (blobs[i].hexes.Overlaps(otherBlob.hexes) && !merged[j]) {
+                        merged[j] = true;
+                        somethingMerged = true;
+                        blobs[i].hexes.UnionWith(otherBlob.hexes);
+                    }
+                }
+            } while (somethingMerged);
+            
+        }
+        blobs = newBlobs;
 
-        //need a hash set for fast set operations and an array because order matters
-        Hex[] hexes = city.getHexes();
-        HashSet<Hex> hexSet = new HashSet<Hex>(hexes);
+        foreach (Blob blob in blobs) {
+            Debug.Log("Drawing border for blob around city: " + blob.city.name);
+            //hexes contained in this blob
+            HashSet<Hex> hexes = blob.hexes;
+            //hexes we've visited so far
+            HashSet<Hex> visitedHexes = new HashSet<Hex>();
 
-        //need a hashset of positions for fast set operations and array because order matters
-        List<Vector3> positions = new List<Vector3>();
-        HashSet<Vector3> posSet = new HashSet<Vector3>();
+            //need a hashset of positions for fast set operations and array because order matters
+            List<Vector3> positions = new List<Vector3>();
+            HashSet<Vector3> posSet = new HashSet<Vector3>();
 
-        //loop through each hex that this city owns
-        foreach(Hex h in hexes) {
-            //check if this hex has any neighbors not owned by this city
+            //find a hex on the edge of the blob.
+            Hex currHex = hexes.First<Hex>();
+            while (hexes.Contains(currHex.getNeighbor(HexMap.DIRECTION.NORTHEAST))){
+                currHex = currHex.getNeighbor(HexMap.DIRECTION.NORTHEAST);
+            }
 
-            //the order that we check the neighbors is very important.
-            //We need to start in the direction of the city center then
-            //move clockwise
-            //This probably only works if the hexes array is in clockwise order
+            Debug.Log("Found a hex on the edge of the blob: " + currHex.coordsString());
 
-            //figure out which direction the city center is in
-            HexMap.DIRECTION dir = getCityDir(city.hex, h);
+            //until we get back to the starting hex
+            HexMap.DIRECTION dir = HexMap.DIRECTION.SOUTHEAST;
+            bool finished = false;
+            while (!finished) {
+                //start one edge clockwise of the direction we came from
+                dir = getOppositeDirection(dir);
+                dir = getNextClockwiseDirection(dir);
+                //search clockwise checking if each neighbor is in the blob
+                //if not, add the vertices for that edge to the list
+                //if so, move to that hex
+                while (!hexes.Contains(currHex.getNeighbor(dir))) {
 
-            Hex[] neighbors = h.getNeighbors();
-            //print(h.coordsString() + ", " + Enum.GetName(typeof(HexMap.DIRECTION), dir));
-            for (int i = 0; i < 6; i++) {
-                Hex n = neighbors[(int) dir];
-                if(n != null && !hexSet.Contains<Hex>(n)) {
                     //set a line position on the corners that make the border
-                    (Vector3, Vector3) corners = getCorners(dir, h);
+                    (Vector3, Vector3) corners = getCorners(dir, currHex);
 
                     //round values to we don't miss duplicates due to floating point error
                     corners.Item1.x = (float)Math.Round((Decimal)corners.Item1.x, 3, MidpointRounding.AwayFromZero);
@@ -165,25 +195,98 @@ public class UIController : MonoBehaviour
                     corners.Item2.y = (float)Math.Round((Decimal)corners.Item2.y, 3, MidpointRounding.AwayFromZero);
                     corners.Item2.z = (float)Math.Round((Decimal)corners.Item2.z, 3, MidpointRounding.AwayFromZero);
 
-                    //make sure we don't add duplicates
-                    if (!posSet.Contains(corners.Item1)) {
+                    bool containsCorner1 = posSet.Contains(corners.Item1);
+                    bool containsCorner2 = posSet.Contains(corners.Item2);
+                    //check for exit condition
+                    if (containsCorner1 && containsCorner2 && visitedHexes.Contains(currHex)) {
+                        finished = true;
+                        break;
+                    }
+
+                    //otherwise make sure we don't add duplicates
+                    if (!containsCorner1) {
                         positions.Add(corners.Item1);
                         posSet.Add(corners.Item1);
                     }
 
-                    if (!posSet.Contains(corners.Item2)) {
+                    if (!containsCorner2) {
                         positions.Add(corners.Item2);
                         posSet.Add(corners.Item2);
                     }
 
-                    dir = (HexMap.DIRECTION) (((int) dir + 1) % 6);
+                    dir = getNextClockwiseDirection(dir);
+                    Debug.Log("Checking direction: " + dir.ToString());
                 }
-            }
-        }
 
-        borderLineRenderer.positionCount = positions.Count;
-        borderLineRenderer.loop = true;
-        borderLineRenderer.SetPositions(positions.ToArray());
+                visitedHexes.Add(currHex);
+                currHex = currHex.getNeighbor(dir);
+            }
+
+            //draw border for this blob
+            LineRenderer borderLineRenderer = borderLineRenderers[blob.city];
+            borderLineRenderer.positionCount = positions.Count;
+            borderLineRenderer.loop = true;
+            borderLineRenderer.SetPositions(positions.ToArray());
+            borderLineRenderer.enabled = true;
+        }
+    }
+
+    private LineRenderer getNewLineRenderer(City c) {
+        GameObject lineGO = new GameObject("LineRenderer: " + c.name);
+        lineGO.transform.position = Vector3.zero;
+        lineGO.transform.parent = borderLineContainer.transform;
+        lineGO.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+        lineGO.AddComponent<LineRenderer>();
+        LineRenderer lr = lineGO.GetComponent<LineRenderer>();
+        lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        lr.receiveShadows = false;
+        lr.allowOcclusionWhenDynamic = false;
+        lr.useWorldSpace = true;
+        lr.loop = true;
+        lr.positionCount = 0;
+        lr.alignment = LineAlignment.TransformZ;
+        lr.material = borderMaterial;
+        lr.startWidth = .1f;
+        lr.endWidth = .1f;
+        lr.enabled = true;
+
+        return lr;
+    }
+
+    private HexMap.DIRECTION getNextClockwiseDirection(HexMap.DIRECTION dir) {
+        switch (dir) {
+            case HexMap.DIRECTION.WEST:
+                return HexMap.DIRECTION.NORTHWEST;
+            case HexMap.DIRECTION.NORTHWEST:
+                return HexMap.DIRECTION.NORTHEAST;
+            case HexMap.DIRECTION.NORTHEAST:
+                return HexMap.DIRECTION.EAST;
+            case HexMap.DIRECTION.EAST:
+                return HexMap.DIRECTION.SOUTHEAST;
+            case HexMap.DIRECTION.SOUTHEAST:
+                return HexMap.DIRECTION.SOUTHWEST;
+            case HexMap.DIRECTION.SOUTHWEST:
+                return HexMap.DIRECTION.WEST;
+        }
+        return 0;
+    }
+
+    private HexMap.DIRECTION getOppositeDirection(HexMap.DIRECTION dir) {
+        switch (dir) {
+            case HexMap.DIRECTION.WEST:
+                return HexMap.DIRECTION.EAST;
+            case HexMap.DIRECTION.NORTHWEST:
+                return HexMap.DIRECTION.SOUTHEAST;
+            case HexMap.DIRECTION.NORTHEAST:
+                return HexMap.DIRECTION.SOUTHWEST;
+            case HexMap.DIRECTION.EAST:
+                return HexMap.DIRECTION.WEST;
+            case HexMap.DIRECTION.SOUTHEAST:
+                return HexMap.DIRECTION.NORTHWEST;
+            case HexMap.DIRECTION.SOUTHWEST:
+                return HexMap.DIRECTION.NORTHEAST;
+        }
+        return 0;
     }
 
     //part of the onClick for the input text on the city info panel
@@ -204,7 +307,7 @@ public class UIController : MonoBehaviour
 
     //takes a hex and a direction and returns the two vectors of the positions of the
     //corners that make up the border between the hex and its neighbor in the given direction
-    //in clockwise order around the city center
+    //in clockwise order
     private (Vector3, Vector3) getCorners(HexMap.DIRECTION d, Hex h) {
 
         Vector3 pos = hexMap.getGOFromHex(h).transform.position;

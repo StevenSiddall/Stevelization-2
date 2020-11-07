@@ -33,6 +33,9 @@ public class Unit : MapObject {
     }
 
     public void setHexPath(Hex[] hexPath) {
+        if(hexPath == null) {
+            return;
+        }
         this.hexPath = new Queue<Hex>(hexPath);
     }
 

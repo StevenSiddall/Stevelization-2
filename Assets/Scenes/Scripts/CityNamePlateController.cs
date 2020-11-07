@@ -26,7 +26,7 @@ public class CityNamePlateController : MonoBehaviour
         
     }
 
-    public void createCityNamePlate(City city, GameObject cityGO) {
+    public void createCityNamePlate(City city, GameObject cityGO, Dictionary<City, GameObject> cityToGOMap, Dictionary<GameObject, City> goToCityMap) {
         GameObject nameGO = Instantiate(cityNamePlatePrefab, this.transform);
         MapObjectNamePlate namePlateGO = nameGO.GetComponent<MapObjectNamePlate>();
         namePlateGO.target = cityGO;

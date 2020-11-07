@@ -164,6 +164,24 @@ public class Hex {
         return neighbors.ToArray();
     }
 
+    public Hex getNeighbor(HexMap.DIRECTION dir) {
+        switch(dir) {
+            case HexMap.DIRECTION.NORTHEAST:
+                return hexMap.getHex(this.Q, this.R + 1);
+            case HexMap.DIRECTION.EAST:
+                return hexMap.getHex(this.Q + 1, this.R);
+            case HexMap.DIRECTION.SOUTHEAST:
+                return hexMap.getHex(this.Q + 1, this.R - 1);
+            case HexMap.DIRECTION.SOUTHWEST:
+                return hexMap.getHex(this.Q, this.R - 1);
+            case HexMap.DIRECTION.WEST:
+                return hexMap.getHex(this.Q - 1, this.R);
+            case HexMap.DIRECTION.NORTHWEST:
+                return hexMap.getHex(this.Q - 1, this.R + 1);
+        }
+        return null;
+    }
+
     public string coordsString() {
         return ("(" + this.Q + "," + this.R + ")");
     }
