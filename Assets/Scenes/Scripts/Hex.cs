@@ -66,21 +66,21 @@ public class Hex {
     /*
      * Returns world space position of this hex
      * */
-    public Vector3 position() {
+    public Vector3 Position() {
         return new Vector3(
             HORIZ_SPACING * (this.Q + this.R / 2f),
             0,
             VERT_SPACING * this.R);
     }
 
-    public Vector3 positionFromCamera() {
-        return hexMap.getHexPosition(this);
+    public Vector3 PositionFromCamera() {
+        return hexMap.GetHexPosition(this);
     }
 
-    public Vector3 positionFromCamera(Vector3 camPos, float numCols, float numRows) {
+    public Vector3 PositionFromCamera(Vector3 camPos, float numCols, float numRows) {
         float mapWidth = numCols * HORIZ_SPACING;
 
-        Vector3 pos = position();
+        Vector3 pos = Position();
         float numWidthsFromCam = (pos.x - camPos.x) / mapWidth;
 
         numWidthsFromCam = Mathf.Round(numWidthsFromCam);
@@ -89,7 +89,7 @@ public class Hex {
         return pos;
     }
 
-    public static float distance(Hex a, Hex b) {
+    public static float Distance(Hex a, Hex b) {
         //TODO: test this. probably wrong for wrapping
         int dQ = Mathf.Min(Mathf.Abs(a.Q - b.Q),
                             Mathf.Abs(a.hexMap.numCols - Mathf.Abs(a.Q - b.Q)));
@@ -102,7 +102,7 @@ public class Hex {
                          dS);
     }
 
-    public void addUnit(Unit unit) {
+    public void AddUnit(Unit unit) {
         if(units == null) {
             units = new HashSet<Unit>();
         }
@@ -110,7 +110,7 @@ public class Hex {
         units.Add(unit);
     }
 
-    public void addCity(City newCity) {
+    public void AddCity(City newCity) {
         if(this.city != null) {
             throw new UnityException("Trying to add a city to a tile that already has one! UI shouldn't allow this!");
         }
@@ -118,7 +118,7 @@ public class Hex {
         this.city = newCity;
     }
 
-    public void removeCity() {
+    public void RemoveCity() {
         if(this.city == null) {
             Debug.LogError("Trying to remove a city that isn't present!");
         }
@@ -126,7 +126,7 @@ public class Hex {
         this.city = null;
     }
 
-    public void removeUnit(Unit unit) {
+    public void RemoveUnit(Unit unit) {
         if(units == null) {
             return;
         }
@@ -136,23 +136,23 @@ public class Hex {
         }
     }
 
-    public float getMovementCost() {
+    public float GetMovementCost() {
         return movementCost;
     }
 
-    public Unit[] getUnitArray() {
+    public Unit[] GetUnitArray() {
         return units.ToArray<Unit>();
     }
 
-    public Hex[] getNeighbors() {
+    public Hex[] GetNeighbors() {
         //TODO: what if this hex is at the north or south edge of the map
         Hex[] hexes = new Hex[6];
-        hexes[(int)HexMap.DIRECTION.NORTHEAST] = hexMap.getHex(this.Q, this.R + 1); 
-        hexes[(int)HexMap.DIRECTION.EAST] = hexMap.getHex(this.Q + 1, this.R); 
-        hexes[(int)HexMap.DIRECTION.SOUTHEAST] = hexMap.getHex(this.Q + 1, this.R - 1);
-        hexes[(int)HexMap.DIRECTION.SOUTHWEST] = hexMap.getHex(this.Q, this.R - 1);
-        hexes[(int)HexMap.DIRECTION.WEST] = hexMap.getHex(this.Q - 1, this.R);
-        hexes[(int)HexMap.DIRECTION.NORTHWEST] = hexMap.getHex(this.Q - 1, this.R + 1);
+        hexes[(int)HexMap.DIRECTION.NORTHEAST] = hexMap.GetHex(this.Q, this.R + 1); 
+        hexes[(int)HexMap.DIRECTION.EAST] = hexMap.GetHex(this.Q + 1, this.R); 
+        hexes[(int)HexMap.DIRECTION.SOUTHEAST] = hexMap.GetHex(this.Q + 1, this.R - 1);
+        hexes[(int)HexMap.DIRECTION.SOUTHWEST] = hexMap.GetHex(this.Q, this.R - 1);
+        hexes[(int)HexMap.DIRECTION.WEST] = hexMap.GetHex(this.Q - 1, this.R);
+        hexes[(int)HexMap.DIRECTION.NORTHWEST] = hexMap.GetHex(this.Q - 1, this.R + 1);
 
         List<Hex> neighbors = new List<Hex>();
         for(int i = 0; i < hexes.Length; i++) {
@@ -164,58 +164,58 @@ public class Hex {
         return neighbors.ToArray();
     }
 
-    public Hex getNeighbor(HexMap.DIRECTION dir) {
+    public Hex GetNeighbor(HexMap.DIRECTION dir) {
         switch(dir) {
             case HexMap.DIRECTION.NORTHEAST:
-                return hexMap.getHex(this.Q, this.R + 1);
+                return hexMap.GetHex(this.Q, this.R + 1);
             case HexMap.DIRECTION.EAST:
-                return hexMap.getHex(this.Q + 1, this.R);
+                return hexMap.GetHex(this.Q + 1, this.R);
             case HexMap.DIRECTION.SOUTHEAST:
-                return hexMap.getHex(this.Q + 1, this.R - 1);
+                return hexMap.GetHex(this.Q + 1, this.R - 1);
             case HexMap.DIRECTION.SOUTHWEST:
-                return hexMap.getHex(this.Q, this.R - 1);
+                return hexMap.GetHex(this.Q, this.R - 1);
             case HexMap.DIRECTION.WEST:
-                return hexMap.getHex(this.Q - 1, this.R);
+                return hexMap.GetHex(this.Q - 1, this.R);
             case HexMap.DIRECTION.NORTHWEST:
-                return hexMap.getHex(this.Q - 1, this.R + 1);
+                return hexMap.GetHex(this.Q - 1, this.R + 1);
         }
         return null;
     }
 
-    public string coordsString() {
+    public string CoordsString() {
         return ("(" + this.Q + "," + this.R + ")");
     }
 
-    public void setTerrainType(TERRAIN_TYPE newterrain) {
+    public void SetTerrainType(TERRAIN_TYPE newterrain) {
         this.terrainType = newterrain;
-        updateMovementCost();
+        UpdateMovementCost();
     }
 
-    public void setElevationType(ELEVATION_TYPE newelev) {
+    public void SetElevationType(ELEVATION_TYPE newelev) {
         this.elevationType = newelev;
-        updateMovementCost();
+        UpdateMovementCost();
     }
 
-    public void setFeature(FEATURE_TYPE newfeature) {
+    public void SetFeature(FEATURE_TYPE newfeature) {
         this.featureType = newfeature;
-        updateMovementCost();
+        UpdateMovementCost();
     }
 
-    public TERRAIN_TYPE getTerrainType () {
+    public TERRAIN_TYPE GetTerrainType () {
         return terrainType;
     }
 
-    public ELEVATION_TYPE getElevationType () {
+    public ELEVATION_TYPE GetElevationType () {
         return elevationType;
     }
 
-    public FEATURE_TYPE getFeatureType() {
+    public FEATURE_TYPE GetFeatureType() {
         return featureType;
     }
 
     //updates this tile's movement cost based on its type and features
     //shouldn't need to ever call this from outside this class since setters should call it
-    public void updateMovementCost() {
+    public void UpdateMovementCost() {
         movementCost = BASE_MOVECOST;
 
         //check the elevation

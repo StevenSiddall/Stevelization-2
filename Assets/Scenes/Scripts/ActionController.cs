@@ -21,61 +21,61 @@ public class ActionController : MonoBehaviour
         mouseController = FindObjectOfType<MouseController>();
     }
 
-    public void nextTurn() {
+    public void NextTurn() {
         if (animationIsPlaying) {
             return;
         }
 
-        HashSet<Unit> units = hexMap.getUnits();
-        moveUnits(units);
-        replenishUnitMovement(units);
-        uiController.updateSelection(selectedUnit, selectedCity);
+        HashSet<Unit> units = hexMap.GetUnits();
+        MoveUnits(units);
+        ReplenishUnitMovement(units);
+        uiController.UpdateSelection(selectedUnit, selectedCity);
     }
 
-    public void replenishUnitMovement(HashSet<Unit> units) {
+    public void ReplenishUnitMovement(HashSet<Unit> units) {
         foreach(Unit u in units) {
             u.movementRemaining = u.movement;
         }
     }
 
-    public void moveUnits(HashSet<Unit> units) {
+    public void MoveUnits(HashSet<Unit> units) {
         if (units != null) {
             foreach (Unit u in units) {
-                StartCoroutine(doUnitMovement(u));
+                StartCoroutine(DoUnitMovement(u));
             }
         }
     }
 
-    public IEnumerator doUnitMovement(Unit unit) {
+    public IEnumerator DoUnitMovement(Unit unit) {
         if (animationIsPlaying) {
             yield break;
         }
 
-        while (unit.canMoveAgain()) {
+        while (unit.CanMoveAgain()) {
             animationIsPlaying = true;
-            unit.move();
+            unit.Move();
             while (animationIsPlaying) {
                 yield return null; //wait for animation to get close to finishing
             }
-            unit.movementRemaining -= unit.hex.getMovementCost();
-            uiController.updateSelection(selectedUnit, selectedCity);
+            unit.movementRemaining -= unit.hex.GetMovementCost();
+            uiController.UpdateSelection(selectedUnit, selectedCity);
             animationIsPlaying = false;
         }
     }
 
-    public void selectUnit(Unit unit) {
+    public void SelectUnit(Unit unit) {
         selectedUnit = unit;
         selectedCity = null;
-        uiController.updateSelection(selectedUnit, selectedCity);
+        uiController.UpdateSelection(selectedUnit, selectedCity);
     }
 
-    public void selectCity(City city) {
+    public void SelectCity(City city) {
         selectedCity = city;
         selectedUnit = null;
-        uiController.updateSelection(selectedUnit, selectedCity);
+        uiController.UpdateSelection(selectedUnit, selectedCity);
     }
 
-    public void select(Hex hexUnderMouse) {
+    public void Select(Hex hexUnderMouse) {
 
         if (hexUnderMouse == null) {
             Debug.Log("didn't find hex to select");
@@ -83,10 +83,10 @@ public class ActionController : MonoBehaviour
         }
 
         Debug.Log("Hex selected");
-        Unit[] units = hexUnderMouse.getUnitArray();
+        Unit[] units = hexUnderMouse.GetUnitArray();
         if (units == null || units.Length == 0) {
             //no unit present -- deselect
-            selectUnit(null);
+            SelectUnit(null);
             print("No units present");
             return;
         }
@@ -94,13 +94,13 @@ public class ActionController : MonoBehaviour
         //check if we already have a unit selected
         if(selectedUnit == null || selectedUnit.hex != hexUnderMouse) {
             //no unit selected -- get the first one
-            selectUnit(units[0]);
+            SelectUnit(units[0]);
         } else {
             //loop through the units on the hex and select the next one
             bool foundUnit = false;
             for (int i = 0; i < units.Length; i++) {
                 if (units[i] == selectedUnit) {
-                    selectUnit(units[(i + 1) % units.Length]);
+                    SelectUnit(units[(i + 1) % units.Length]);
                     foundUnit = true;
                 }
             }
@@ -108,33 +108,33 @@ public class ActionController : MonoBehaviour
             //make sure we found the unit we have selected
             if (!foundUnit) {
                 Debug.LogError("Couldn't find currently selected unit. selecting top unit");
-                selectUnit(units[0]);
+                SelectUnit(units[0]);
             }
         }
     }
 
-    public void renameCity(City city, string newName) {
+    public void RenameCity(City city, string newName) {
         if(city != null) {
             city.name = newName;
-            uiController.updateSelection(this.selectedUnit, this.selectedCity);
+            uiController.UpdateSelection(this.selectedUnit, this.selectedCity);
         }
     }
 
-    public Unit getSelectedUnit() {
+    public Unit GetSelectedUnit() {
         return selectedUnit;
     }
 
-    public City getSelectedCity() {
+    public City GetSelectedCity() {
         return selectedCity;
     }
 
-    public void buildCity() {
+    public void BuildCity() {
         if (animationIsPlaying) {
             return;
         }
 
         City city = new City();
-        hexMap.spawnCityAt(city, hexMap.cityPrefab, selectedUnit.hex.Q, selectedUnit.hex.R);
-        uiController.updateSelection(selectedUnit, selectedCity);
+        hexMap.SpawnCityAt(city, hexMap.cityPrefab, selectedUnit.hex.Q, selectedUnit.hex.R);
+        uiController.UpdateSelection(selectedUnit, selectedCity);
     }
 }

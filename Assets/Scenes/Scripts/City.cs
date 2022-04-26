@@ -16,26 +16,26 @@ public class City : MapObject {
         hexes = new List<Hex>();
     }
 
-    public override void setHex(Hex newHex) {
+    public override void SetHex(Hex newHex) {
         if(hex != null) {
-            hex.removeCity();
+            hex.RemoveCity();
         }
 
-        base.setHex(newHex);
-        hex.addCity(this);
+        base.SetHex(newHex);
+        hex.AddCity(this);
 
-        addHex(hex);
-        Hex[] neighbors = hex.getNeighbors();
+        AddHex(hex);
+        Hex[] neighbors = hex.GetNeighbors();
         foreach(Hex h in neighbors) {
-            addHex(h);
+            AddHex(h);
         }
     }
 
-    public void addHex(Hex hex) {
+    public void AddHex(Hex hex) {
         hexes.Add(hex);
     }
 
-    public Hex[] getHexes() {
+    public Hex[] GetHexes() {
         return hexes.ToArray();
     }
 }

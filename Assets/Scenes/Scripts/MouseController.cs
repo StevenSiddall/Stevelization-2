@@ -39,92 +39,92 @@ public class MouseController : MonoBehaviour
 
     // Start is called before the first frame update
     void Start() {
-        update_CurrentFunc = update_DetectModeStart;
+        update_CurrentFunc = UpdateDetectModeStart;
         hexMap = GameObject.FindObjectOfType<HexMap>();
         uiController = FindObjectOfType<UIController>();
         actionController = FindObjectOfType<ActionController>();
     }
 
     void Update() {
-        hexUnderMouse = mouseToHex();
+        hexUnderMouse = MouseToHex();
         mouseIsOverUIElement = UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject();
 
         if (Input.GetKeyDown(KeyCode.Escape)) {
-            cancelUpdateFunc();
+            CancelUpdateFunc();
         }
         update_CurrentFunc();
 
         //always allow for camera zooming with scrollwheel
-        update_ScrollZoom();
+        UpdateScrollZoom();
 
 
-        if(actionController.getSelectedUnit() != null) {
+        if(actionController.GetSelectedUnit() != null) {
             //draw path
-            uiController.drawPath( (hexPath != null) ? hexPath : actionController.getSelectedUnit().getHexPath());
+            uiController.DrawPath( (hexPath != null) ? hexPath : actionController.GetSelectedUnit().GetHexPath());
         } else {
-            uiController.drawPath(null);
+            uiController.DrawPath(null);
         }
 
         lastMousePos = Input.mousePosition;
         lastHexUnderMouse = hexUnderMouse;
     }
 
-    void update_DetectModeStart() {
+    void UpdateDetectModeStart() {
         if (Input.GetMouseButtonDown(BUTTON_LEFTMOUSE)) {   // LMB was pressed down this frame
 
         } else if (Input.GetMouseButtonUp(BUTTON_LEFTMOUSE)) {
             //are we click on a tile with a unit?
             //Debug.Log("left click");
-            actionController.select(hexUnderMouse);
+            actionController.Select(hexUnderMouse);
         } else if (Input.GetMouseButton(BUTTON_LEFTMOUSE) && Input.mousePosition != lastMousePos) { // LMB is being held down
             // LMB held down and mouse moved -- camera drag
-            lastMouseGroundPlanePos = mouseToGroundPlane(Input.mousePosition);
-            update_CurrentFunc = update_clickAndDrag;
+            lastMouseGroundPlanePos = MouseToGroundPlane(Input.mousePosition);
+            update_CurrentFunc = UpdateClickAndDrag;
             update_CurrentFunc();
-        } else if (actionController.getSelectedUnit() != null && Input.GetMouseButton(BUTTON_RIGHTMOUSE)) {
+        } else if (actionController.GetSelectedUnit() != null && Input.GetMouseButton(BUTTON_RIGHTMOUSE)) {
             //right clicked somewhere -- tell action controller
-            update_CurrentFunc = update_UnitMovement;
+            update_CurrentFunc = UpdateUnitMovement;
         }
     }
 
-    void update_UnitMovement() {
+    void UpdateUnitMovement() {
 
         if (mouseIsOverUIElement) {
             return;
         }
 
-        if (Input.GetMouseButtonUp(BUTTON_RIGHTMOUSE) || actionController.getSelectedUnit() == null) {
+        if (Input.GetMouseButtonUp(BUTTON_RIGHTMOUSE) || actionController.GetSelectedUnit() == null) {
             //queue movement for unit
-            if(actionController.getSelectedUnit() != null) {
-                actionController.getSelectedUnit().setHexPath(hexPath);
-                StartCoroutine(actionController.doUnitMovement(actionController.getSelectedUnit()));
+            if(actionController.GetSelectedUnit() != null) {
+                actionController.GetSelectedUnit().SetHexPath(hexPath);
+                StartCoroutine(actionController.DoUnitMovement(actionController.GetSelectedUnit()));
             }
 
-            cancelUpdateFunc();
+            CancelUpdateFunc();
             return;
         }
 
         if(Input.GetMouseButton(BUTTON_RIGHTMOUSE) && (hexPath == null || hexUnderMouse != lastHexUnderMouse)) {
             // calculate route to hex under mouse
-            hexPath = HexPathfinder.getPath(actionController.getSelectedUnit().hex, hexUnderMouse);
+            hexPath = HexPathfinder.GetPath(actionController.GetSelectedUnit().hex, hexUnderMouse);
         }
     }
 
-    void update_ScrollZoom() {
+    void UpdateScrollZoom() {
 
         if (mouseIsOverUIElement) {
             return;
         }
 
-        this.lastMouseGroundPlanePos = mouseToGroundPlane(Input.mousePosition);
+        this.lastMouseGroundPlanePos = MouseToGroundPlane(Input.mousePosition);
         //handle scrollwheel zooming
         float scrollAmount = Input.GetAxis("Mouse ScrollWheel");
         if (Mathf.Abs(scrollAmount) > ZOOM_THRESH) {
-            handleZoom(lastMouseGroundPlanePos, scrollAmount);
+            HandleZoom(lastMouseGroundPlanePos, scrollAmount);
         }
     }
 
-    private void handleZoom(Vector3 hitPos, float scrollAmount) {
+    private void HandleZoom(Vector3 hitPos, float scrollAmount) {
 
         if (mouseIsOverUIElement) {
             return;
@@ -146,13 +146,13 @@ public class MouseController : MonoBehaviour
             Camera.main.transform.rotation.eulerAngles.z);
     }
 
-    void update_clickAndDrag() {
+    void UpdateClickAndDrag() {
         if (Input.GetMouseButtonUp(BUTTON_LEFTMOUSE)) {
-            cancelUpdateFunc();
+            CancelUpdateFunc();
             return;
         }
 
-        Vector3 hitPos = mouseToGroundPlane(Input.mousePosition);
+        Vector3 hitPos = MouseToGroundPlane(Input.mousePosition);
 
         Vector3 diff = lastMouseGroundPlanePos - hitPos;
         Camera.main.transform.Translate(diff, Space.World);
@@ -167,7 +167,7 @@ public class MouseController : MonoBehaviour
         this.lastMouseGroundPlanePos = mouseRay.origin - (mouseRay.direction * rayLength);
     }
 
-    private Vector3 mouseToGroundPlane(Vector3 mousePos) {
+    private Vector3 MouseToGroundPlane(Vector3 mousePos) {
         Ray mouseRay = Camera.main.ScreenPointToRay(mousePos);
 
         //what is the point at which the mouse ray intersects Y=0
@@ -179,13 +179,13 @@ public class MouseController : MonoBehaviour
         return mouseRay.origin - (mouseRay.direction * rayLength);
     }
 
-    private void cancelUpdateFunc() {
-        update_CurrentFunc = update_DetectModeStart;
+    private void CancelUpdateFunc() {
+        update_CurrentFunc = UpdateDetectModeStart;
         hexPath = null;
         //clean up any UI stuff associated with modes
     }
 
-    private Hex mouseToHex() {
+    private Hex MouseToHex() {
 
         if (mouseIsOverUIElement) {
             return null;
@@ -203,7 +203,7 @@ public class MouseController : MonoBehaviour
             // The collider is a child of the "correct" game object that we want.
             GameObject hexGO = hitInfo.rigidbody.gameObject.transform.parent.gameObject;
 
-            return hexMap.getHexFromGO(hexGO);
+            return hexMap.GetHexFromGO(hexGO);
         }
 
         //no hex there

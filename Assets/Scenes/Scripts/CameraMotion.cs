@@ -13,21 +13,21 @@ public class CameraMotion : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
-        checkIfCameraMoved();
+        CheckIfCameraMoved();
     }
 
-    public void panToHex(Hex hex) {
+    public void PanToHex(Hex hex) {
         //TODO: move camera to hex
     }
 
-    public void checkIfCameraMoved() {
+    public void CheckIfCameraMoved() {
         if(oldPos != this.transform.position) {
             oldPos = this.transform.position;
 
             HexBehavior[] hexes = GameObject.FindObjectsOfType<HexBehavior>();
 
             foreach(HexBehavior hex in hexes) {
-                hex.updatePosition();
+                hex.UpdatePosition();
             }
         }
     }

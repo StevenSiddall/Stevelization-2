@@ -38,7 +38,7 @@ public class HexMap_Continent : HexMap
                 int r = Random.Range(range, numRows - range);
                 int q = Random.Range(0, 10) + (c * continentSpacing);
 
-                elevateArea(q, r, range);
+                ElevateArea(q, r, range);
             }
         }
 
@@ -51,7 +51,7 @@ public class HexMap_Continent : HexMap
 
         for(int col = 0; col < numCols; col++) {
             for(int row = 0; row < numRows; row++) {
-                Hex h = getHex(col, row);
+                Hex h = GetHex(col, row);
                 float n = Mathf.PerlinNoise( ((float)col / (float) Mathf.Max(numCols, numRows) / ELEV_NOISE_RES) + xOrigin, 
                                              ((float)row / (float) Mathf.Max(numCols, numRows) / ELEV_NOISE_RES) + yOrigin);
                 h.elevation += ((n * 2f) - 1f) * ELEV_NOISE_SCALE; //scale to [0,2] then shift to [-1,1] and scale
@@ -65,28 +65,28 @@ public class HexMap_Continent : HexMap
 
         for (int col = 0; col < numCols; col++) {
             for (int row = 0; row < numRows; row++) {
-                Hex h = getHex(col, row);
+                Hex h = GetHex(col, row);
                 float n = Mathf.PerlinNoise(((float)col / (float)Mathf.Max(numCols, numRows) / MOISTURE_NOISE_RES) + xOrigin,
                                              ((float)row / (float)Mathf.Max(numCols, numRows) / MOISTURE_NOISE_RES) + yOrigin);
                 h.moisture = n * MOISTURE_NOISE_SCALE; //keep as [0,1] before scaling
             }
         }
 
-        updateHexVisuals();
+        UpdateHexVisuals();
 
         Unit unit = new Unit();
         unit.canBuildCities = true;
-        spawnUnitAt(unit, unitFootsoldierPrefab, 62, 6);
+        SpawnUnitAt(unit, unitFootsoldierPrefab, 62, 6);
 
     }
 
-    public void elevateArea(int q, int r, int range, float centerHeight = 1f) {
-        Hex centerHex = getHex(q, r);
+    public void ElevateArea(int q, int r, int range, float centerHeight = 1f) {
+        Hex centerHex = GetHex(q, r);
 
-        Hex[] areaHexes = getHexesWithinRange(centerHex, range);
+        Hex[] areaHexes = GetHexesWithinRange(centerHex, range);
 
         foreach(Hex h in areaHexes) {
-            h.elevation += .35f * Mathf.Lerp(1f, 0.25f, Mathf.Pow(Hex.distance(centerHex, h) / range, 1.5f));
+            h.elevation += .35f * Mathf.Lerp(1f, 0.25f, Mathf.Pow(Hex.Distance(centerHex, h) / range, 1.5f));
         }
     }
 }

@@ -7,11 +7,11 @@ public class HexPathfinder {
     /*
      * Get a path from start to end using A* algorithm
      */
-    public static Hex[] getPath(Hex start, Hex end) {
+    public static Hex[] GetPath(Hex start, Hex end) {
 
         //discovered nodes
         HexPriorityQueue openSet = new HexPriorityQueue();
-        openSet.add(start, heuristic(start, end));
+        openSet.Add(start, Heuristic(start, end));
 
         //cameFrom[h] is the hex preceding h in the final path
         Dictionary<Hex, Hex> cameFrom = new Dictionary<Hex, Hex>();
@@ -21,27 +21,27 @@ public class HexPathfinder {
         g[start] = 0;
 
         Dictionary<Hex, float> f = new Dictionary<Hex, float>();
-        f[start] = heuristic(start, end);
+        f[start] = Heuristic(start, end);
 
         HashSet<Hex> done = new HashSet<Hex>();
 
         while(openSet.Count() > 0) {
-            Hex currHex = openSet.dequeue();
+            Hex currHex = openSet.Dequeue();
 
             if(f[currHex] >= Mathf.Infinity) { // no route is possible
-                return reconstructPath(null, null, Mathf.Infinity);
+                return ReconstructPath(null, null, Mathf.Infinity);
             } else if (currHex == end) { // found the best route
-                return reconstructPath(cameFrom, currHex, g[currHex]);
+                return ReconstructPath(cameFrom, currHex, g[currHex]);
             }
 
-            Hex[] neighbors = currHex.getNeighbors();
+            Hex[] neighbors = currHex.GetNeighbors();
             foreach(Hex n in neighbors) {
-                float tentative_gScore = g[currHex] + n.getMovementCost();
+                float tentative_gScore = g[currHex] + n.GetMovementCost();
                 if(!g.ContainsKey(n) || tentative_gScore < g[n]) {
                     cameFrom[n] = currHex;
                     g[n] = tentative_gScore;
-                    f[n] = g[n] + heuristic(n, end);
-                    openSet.add(n, f[n]); //may create copies of hexes with different f values
+                    f[n] = g[n] + Heuristic(n, end);
+                    openSet.Add(n, f[n]); //may create copies of hexes with different f values
                 }
             }
         }
@@ -50,7 +50,7 @@ public class HexPathfinder {
         return null;
     }
 
-    private static Hex[] reconstructPath(Dictionary<Hex, Hex> cameFrom, Hex endHex, float totalDist) {
+    private static Hex[] ReconstructPath(Dictionary<Hex, Hex> cameFrom, Hex endHex, float totalDist) {
         if (totalDist >= Mathf.Infinity) {
             return null;
         }
@@ -78,15 +78,15 @@ public class HexPathfinder {
     /*
      *  Gives an estimate of the cost from start to end
      */
-    private static float heuristic(Hex start, Hex end) {
-        float dist = linearHeuristic(start, end);
+    private static float Heuristic(Hex start, Hex end) {
+        float dist = LinearHeuristic(start, end);
         return dist;
     }
 
     /*
      * 
      */
-    private static float linearHeuristic(Hex start, Hex end) {
-        return Hex.distance(start, end);
+    private static float LinearHeuristic(Hex start, Hex end) {
+        return Hex.Distance(start, end);
     }
 }

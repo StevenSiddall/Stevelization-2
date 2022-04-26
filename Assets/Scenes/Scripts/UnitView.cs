@@ -17,10 +17,10 @@ public class UnitView : MonoBehaviour {
     float smoothTime = 0.5f;
 
     //should only ever move a unit one tile at a time
-    public void onUnitMoved(Hex oldHex, Hex newHex) {
-        oldPos = oldHex.positionFromCamera() + Unit.FLATHEIGHT;
-        newPos = newHex.positionFromCamera() + Unit.FLATHEIGHT;
-        updateAngle();
+    public void OnUnitMoved(Hex oldHex, Hex newHex) {
+        oldPos = oldHex.PositionFromCamera() + Unit.FLATHEIGHT;
+        newPos = newHex.PositionFromCamera() + Unit.FLATHEIGHT;
+        UpdateAngle();
     }
 
     void Start() {
@@ -37,7 +37,7 @@ public class UnitView : MonoBehaviour {
         
     }
 
-    void updateAngle() {
+    void UpdateAngle() {
         this.transform.forward = newPos - oldPos;
     }
 }

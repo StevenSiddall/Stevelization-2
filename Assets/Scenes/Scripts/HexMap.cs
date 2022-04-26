@@ -1,4 +1,4 @@
-﻿#define DEBUG_LABELS
+﻿//#define DEBUG_LABELS
 
 using System.Collections;
 using System.Collections.Generic;
@@ -70,7 +70,7 @@ public class HexMap : MonoBehaviour {
     }
 
 
-    public Hex getHex(int q, int r) {
+    public Hex GetHex(int q, int r) {
         if(hexes == null) {
             Debug.LogError("Hexes array not yet instantiated");
             return null;
@@ -107,7 +107,7 @@ public class HexMap : MonoBehaviour {
 
                 hexes[col, row] = h;
 
-                Vector3 pos = h.positionFromCamera(
+                Vector3 pos = h.PositionFromCamera(
                     Camera.main.transform.position,
                     numCols,
                     numRows
@@ -141,7 +141,7 @@ public class HexMap : MonoBehaviour {
         }
     }
 
-    public void updateHexVisuals() {
+    public void UpdateHexVisuals() {
         for (int col = 0; col < numCols; col++) {
             for (int row = 0; row < numRows; row++) {
                 Hex h = hexes[col, row];
@@ -154,8 +154,8 @@ public class HexMap : MonoBehaviour {
                 if(h.elevation >= FLAT_HTHRESH && h.elevation < MOUNTAIN_HTHRESH) {
                     if (h.moisture >= RAINFOREST_MTHRESH) {
                         mr.material = matGrassland;
-                        h.setFeature(Hex.FEATURE_TYPE.RAINFOREST);
-                        h.setTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
+                        h.SetFeature(Hex.FEATURE_TYPE.RAINFOREST);
+                        h.SetTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
                         if (h.elevation >= HILL_HTHRESH) { //check if we should use rainforest for hills or flat land
                             GameObject.Instantiate(rainForestHillPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         } else {
@@ -164,8 +164,8 @@ public class HexMap : MonoBehaviour {
                         
                     } else if (h.moisture >= FOREST_MTHRESH) {
                         mr.material = matGrassland;
-                        h.setFeature(Hex.FEATURE_TYPE.FOREST);
-                        h.setTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
+                        h.SetFeature(Hex.FEATURE_TYPE.FOREST);
+                        h.SetTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
                         if (h.elevation >= HILL_HTHRESH) { //check if we should use forest for hills or flat land
                             GameObject.Instantiate(forestHillPrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
                         } else {
@@ -173,16 +173,16 @@ public class HexMap : MonoBehaviour {
                         }
                     } else if (h.moisture >= GRASSLAND_MTHRESH) {
                         mr.material = matGrassland;
-                        h.setFeature(Hex.FEATURE_TYPE.NONE);
-                        h.setTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
+                        h.SetFeature(Hex.FEATURE_TYPE.NONE);
+                        h.SetTerrainType(Hex.TERRAIN_TYPE.GRASSLANDS);
                     } else if (h.moisture >= PLAINS_MTHRESH) {
                         mr.material = matPlains;
-                        h.setFeature(Hex.FEATURE_TYPE.NONE);
-                        h.setTerrainType(Hex.TERRAIN_TYPE.PLAINS);
+                        h.SetFeature(Hex.FEATURE_TYPE.NONE);
+                        h.SetTerrainType(Hex.TERRAIN_TYPE.PLAINS);
                     } else {
                         mr.material = matDesert;
-                        h.setFeature(Hex.FEATURE_TYPE.NONE);
-                        h.setTerrainType(Hex.TERRAIN_TYPE.DESERT);
+                        h.SetFeature(Hex.FEATURE_TYPE.NONE);
+                        h.SetTerrainType(Hex.TERRAIN_TYPE.DESERT);
                     }
                 }
 
@@ -190,19 +190,19 @@ public class HexMap : MonoBehaviour {
                 if (h.elevation >= MOUNTAIN_HTHRESH) {
                     mr.material = matMountain;
                     mf.mesh = meshMountain;
-                    h.setElevationType(Hex.ELEVATION_TYPE.MOUNTAIN);
+                    h.SetElevationType(Hex.ELEVATION_TYPE.MOUNTAIN);
                 } else if (h.elevation >= HILL_HTHRESH) {
                     mf.mesh = meshHill;
-                    h.setElevationType(Hex.ELEVATION_TYPE.HILL);
+                    h.SetElevationType(Hex.ELEVATION_TYPE.HILL);
                 } else if (h.elevation >= FLAT_HTHRESH) {
                     mf.mesh = meshFlat;
-                    h.setElevationType(Hex.ELEVATION_TYPE.FLAT);
+                    h.SetElevationType(Hex.ELEVATION_TYPE.FLAT);
                 } else {
                     mr.material = matOcean;
                     mf.mesh = meshWater;
-                    h.setElevationType(Hex.ELEVATION_TYPE.WATER);
-                    h.setFeature(Hex.FEATURE_TYPE.NONE);
-                    h.setTerrainType(Hex.TERRAIN_TYPE.WATER);
+                    h.SetElevationType(Hex.ELEVATION_TYPE.WATER);
+                    h.SetFeature(Hex.FEATURE_TYPE.NONE);
+                    h.SetTerrainType(Hex.TERRAIN_TYPE.WATER);
                 }
 
 #if DEBUG_LABELS
@@ -212,29 +212,29 @@ public class HexMap : MonoBehaviour {
         }
     }
 
-    public Vector3 getHexPosition(int q, int r) {
-        Hex h = getHex(q, r);
+    public Vector3 GetHexPosition(int q, int r) {
+        Hex h = GetHex(q, r);
 
-        return getHexPosition(h);
+        return GetHexPosition(h);
     }
 
-    public Vector3 getHexPosition(Hex h) {
-        return h.positionFromCamera(Camera.main.transform.position, numCols, numRows);
+    public Vector3 GetHexPosition(Hex h) {
+        return h.PositionFromCamera(Camera.main.transform.position, numCols, numRows);
     }
 
-    public Hex[] getHexesWithinRange(Hex centerHex, int range) {
+    public Hex[] GetHexesWithinRange(Hex centerHex, int range) {
         List<Hex> results = new List<Hex>();
 
         for(int dx = -range; dx <= range; dx++) {
             for(int dy = Mathf.Max(-range, -dx-range); dy <= Mathf.Min(range, -dx+range); dy++) {
-                results.Add(getHex(centerHex.Q + dx, centerHex.R + dy));
+                results.Add(GetHex(centerHex.Q + dx, centerHex.R + dy));
             }
         }
 
         return results.ToArray();
     }
 
-    public Hex getHexFromGO(GameObject hexGO) {
+    public Hex GetHexFromGO(GameObject hexGO) {
         if (goToHexMap.ContainsKey(hexGO)) {
             return goToHexMap[hexGO];
         }
@@ -242,7 +242,7 @@ public class HexMap : MonoBehaviour {
         return null;
     }
 
-    public GameObject getGOFromHex(Hex h) {
+    public GameObject GetGOFromHex(Hex h) {
         if (hexToGOMap.ContainsKey(h)) {
             return hexToGOMap[h];
         }
@@ -250,7 +250,7 @@ public class HexMap : MonoBehaviour {
         return null;
     }
 
-    public City getCityFromGO(GameObject cityGO) {
+    public City GetCityFromGO(GameObject cityGO) {
         if (goToCityMap.ContainsKey(cityGO)) {
             return goToCityMap[cityGO];
         }
@@ -258,40 +258,40 @@ public class HexMap : MonoBehaviour {
         return null;
     }
 
-    public HashSet<Unit> getUnits() {
+    public HashSet<Unit> GetUnits() {
         return units;
     }
 
-    public void spawnUnitAt(Unit unit, GameObject prefab, int q, int r) {
+    public void SpawnUnitAt(Unit unit, GameObject prefab, int q, int r) {
         if(units == null) {
             units = new HashSet<Unit>();
             unitToGOMap = new Dictionary<Unit, GameObject>();
         }
 
-        GameObject unitHexGO = hexToGOMap[getHex(q, r)];
-        unit.setHex(getHex(q, r));
+        GameObject unitHexGO = hexToGOMap[GetHex(q, r)];
+        unit.SetHex(GetHex(q, r));
 
         GameObject unitGO = Instantiate(prefab, unitHexGO.transform.position, Quaternion.identity, unitHexGO.transform);
         UnitView unitView = unitGO.GetComponent<UnitView>();
         unit.unitView = unitView;
-        unit.onObjectMoved += unitView.onUnitMoved;
+        unit.onObjectMoved += unitView.OnUnitMoved;
 
         units.Add(unit);
         unitToGOMap[unit] = unitGO;
     }
 
-    public void spawnCityAt(City city, GameObject prefab, int q, int r) {
+    public void SpawnCityAt(City city, GameObject prefab, int q, int r) {
         if (cities == null) {
             cities = new HashSet<City>();
             cityToGOMap = new Dictionary<City, GameObject>();
             goToCityMap = new Dictionary<GameObject, City>();
         }
 
-        Hex cityHex = getHex(q, r);
+        Hex cityHex = GetHex(q, r);
         GameObject cityHexGO = hexToGOMap[cityHex];
 
         try {
-            city.setHex(cityHex);
+            city.SetHex(cityHex);
         } catch (UnityException e) {
             Debug.LogError(e.Message);
             return;

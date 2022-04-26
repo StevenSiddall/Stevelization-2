@@ -10,7 +10,7 @@ abstract public class MapObject {
     public delegate void objectMovedDelegate(Hex oldHex, Hex newHex);
     public event objectMovedDelegate onObjectMoved;
 
-    virtual public void setHex(Hex newHex) {
+    virtual public void SetHex(Hex newHex) {
         Hex oldHex = this.hex;
         this.hex = newHex;
 

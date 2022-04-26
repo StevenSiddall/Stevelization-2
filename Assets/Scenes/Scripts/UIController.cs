@@ -63,23 +63,23 @@ public class UIController : MonoBehaviour
         mouseController = FindObjectOfType<MouseController>();
 
         Button[] allButtons = GameObject.FindObjectsOfType<Button>();
-        nextButton = findButtonByName("NextTurnButton", allButtons);
-        buildCityButton = findButtonByName("BuildCityButton", allButtons);
+        nextButton = FindButtonByName("NextTurnButton", allButtons);
+        buildCityButton = FindButtonByName("BuildCityButton", allButtons);
 
         borderLineRenderers = new Dictionary<City, LineRenderer>();
         cityNamePlates = new Dictionary<City, MapObjectNamePlate>();
 
-        hexMap.onCityCreated += updateCityBorders;
+        hexMap.onCityCreated += UpdateCityBorders;
 
-        nextButton.onClick.AddListener(actionController.nextTurn);
-        buildCityButton.onClick.AddListener(actionController.buildCity);
-        updateSelection(null, null); //disable info panel by default
+        nextButton.onClick.AddListener(actionController.NextTurn);
+        buildCityButton.onClick.AddListener(actionController.BuildCity);
+        UpdateSelection(null, null); //disable info panel by default
     }
 
-    public void updateSelection(Unit unit, City city) {
+    public void UpdateSelection(Unit unit, City city) {
         if(unit != null) {
             unitInfoPanel.SetActive(true);
-            unitInfoPanelBehavior.updateSelection(unit);
+            unitInfoPanelBehavior.UpdateSelection(unit);
         } else {
             unitInfoPanel.SetActive(false);
         }
@@ -92,7 +92,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void drawPath(Hex[] path) {
+    public void DrawPath(Hex[] path) {
         if (path == null || path.Length == 0) {
             movementLineRenderer.enabled = false;
             return;
@@ -100,9 +100,9 @@ public class UIController : MonoBehaviour
         movementLineRenderer.enabled = true;
 
         Vector3[] positions = new Vector3[path.Length + 1];
-        positions[0] = hexMap.getGOFromHex(actionController.getSelectedUnit().hex).transform.position + Vector3.up * .1f;
+        positions[0] = hexMap.GetGOFromHex(actionController.GetSelectedUnit().hex).transform.position + Vector3.up * .1f;
         for (int i = 1; i < path.Length + 1; i++) {
-            GameObject hexGO = hexMap.getGOFromHex(path[i - 1]);
+            GameObject hexGO = hexMap.GetGOFromHex(path[i - 1]);
             positions[i] = hexGO.transform.position + Vector3.up * .1f;
         }
 
@@ -110,7 +110,7 @@ public class UIController : MonoBehaviour
         movementLineRenderer.SetPositions(positions);
     }
 
-    public void updateCityBorders(City city, GameObject cityGO, Dictionary<City, 
+    public void UpdateCityBorders(City city, GameObject cityGO, Dictionary<City, 
                                     GameObject> cityToGOMap, Dictionary<GameObject, City> goToCityMap) {
         List<Blob> blobs = new List<Blob>();
         
@@ -120,13 +120,13 @@ public class UIController : MonoBehaviour
         foreach(City c in cities) {
             if (!borderLineRenderers.ContainsKey(c)) {
                 LineRenderer borderLineRenderer;
-                borderLineRenderer = getNewLineRenderer(c);
+                borderLineRenderer = GetNewLineRenderer(c);
                 borderLineRenderers[c] = borderLineRenderer;
             } else {
                 borderLineRenderers[c].enabled = false;
             }
 
-            blobs.Add(new Blob(c, new HashSet<Hex>(c.getHexes())));
+            blobs.Add(new Blob(c, new HashSet<Hex>(c.GetHexes())));
         }
 
         List<Blob> newBlobs = new List<Blob>();
@@ -165,26 +165,26 @@ public class UIController : MonoBehaviour
 
             //find a hex on the edge of the blob.
             Hex currHex = hexes.First<Hex>();
-            while (hexes.Contains(currHex.getNeighbor(HexMap.DIRECTION.NORTHEAST))){
-                currHex = currHex.getNeighbor(HexMap.DIRECTION.NORTHEAST);
+            while (hexes.Contains(currHex.GetNeighbor(HexMap.DIRECTION.NORTHEAST))){
+                currHex = currHex.GetNeighbor(HexMap.DIRECTION.NORTHEAST);
             }
 
-            Debug.Log("Found a hex on the edge of the blob: " + currHex.coordsString());
+            Debug.Log("Found a hex on the edge of the blob: " + currHex.CoordsString());
 
             //until we get back to the starting hex
             HexMap.DIRECTION dir = HexMap.DIRECTION.SOUTHEAST;
             bool finished = false;
             while (!finished) {
                 //start one edge clockwise of the direction we came from
-                dir = getOppositeDirection(dir);
-                dir = getNextClockwiseDirection(dir);
+                dir = GetOppositeDirection(dir);
+                dir = GetNextClockwiseDirection(dir);
                 //search clockwise checking if each neighbor is in the blob
                 //if not, add the vertices for that edge to the list
                 //if so, move to that hex
-                while (!hexes.Contains(currHex.getNeighbor(dir))) {
+                while (!hexes.Contains(currHex.GetNeighbor(dir))) {
 
                     //set a line position on the corners that make the border
-                    (Vector3, Vector3) corners = getCorners(dir, currHex);
+                    (Vector3, Vector3) corners = GetCorners(dir, currHex);
 
                     //round values to we don't miss duplicates due to floating point error
                     corners.Item1.x = (float)Math.Round((Decimal)corners.Item1.x, 3, MidpointRounding.AwayFromZero);
@@ -214,12 +214,12 @@ public class UIController : MonoBehaviour
                         posSet.Add(corners.Item2);
                     }
 
-                    dir = getNextClockwiseDirection(dir);
+                    dir = GetNextClockwiseDirection(dir);
                     Debug.Log("Checking direction: " + dir.ToString());
                 }
 
                 visitedHexes.Add(currHex);
-                currHex = currHex.getNeighbor(dir);
+                currHex = currHex.GetNeighbor(dir);
             }
 
             //draw border for this blob
@@ -231,7 +231,7 @@ public class UIController : MonoBehaviour
         }
     }
 
-    private LineRenderer getNewLineRenderer(City c) {
+    private LineRenderer GetNewLineRenderer(City c) {
         GameObject lineGO = new GameObject("LineRenderer: " + c.name);
         lineGO.transform.position = Vector3.zero;
         lineGO.transform.parent = borderLineContainer.transform;
@@ -253,7 +253,7 @@ public class UIController : MonoBehaviour
         return lr;
     }
 
-    private HexMap.DIRECTION getNextClockwiseDirection(HexMap.DIRECTION dir) {
+    private HexMap.DIRECTION GetNextClockwiseDirection(HexMap.DIRECTION dir) {
         switch (dir) {
             case HexMap.DIRECTION.WEST:
                 return HexMap.DIRECTION.NORTHWEST;
@@ -271,7 +271,7 @@ public class UIController : MonoBehaviour
         return 0;
     }
 
-    private HexMap.DIRECTION getOppositeDirection(HexMap.DIRECTION dir) {
+    private HexMap.DIRECTION GetOppositeDirection(HexMap.DIRECTION dir) {
         switch (dir) {
             case HexMap.DIRECTION.WEST:
                 return HexMap.DIRECTION.EAST;
@@ -291,26 +291,26 @@ public class UIController : MonoBehaviour
 
     //part of the onClick for the input text on the city info panel
     //set in editor
-    public void renameCity(string doNotUseMe) {
+    public void RenameCity(string doNotUseMe) {
         //for some reason the arg string isn't what the player typed in
         //its the default string (empty)
         string newName = cityInfoPanelNameText.GetComponent<InputField>().text;
-        City city = actionController.getSelectedCity();
-        actionController.renameCity(city, newName);
+        City city = actionController.GetSelectedCity();
+        actionController.RenameCity(city, newName);
         cityNamePlates[city].GetComponentInChildren<Text>().text = city.name;
         print("city has been renamed to " + city.name);
     }
 
-    public void mapCityToNameplate(City city, MapObjectNamePlate np) {
+    public void MapCityToNameplate(City city, MapObjectNamePlate np) {
         cityNamePlates[city] = np;
     }
 
     //takes a hex and a direction and returns the two vectors of the positions of the
     //corners that make up the border between the hex and its neighbor in the given direction
     //in clockwise order
-    private (Vector3, Vector3) getCorners(HexMap.DIRECTION d, Hex h) {
+    private (Vector3, Vector3) GetCorners(HexMap.DIRECTION d, Hex h) {
 
-        Vector3 pos = hexMap.getGOFromHex(h).transform.position;
+        Vector3 pos = hexMap.GetGOFromHex(h).transform.position;
 
         //vectors to get us the corner from the hex transform position
         Vector3 n  = pos + new Vector3(0,  y, r);  //north
@@ -337,9 +337,9 @@ public class UIController : MonoBehaviour
         return (Vector3.zero, Vector3.zero);
     }
 
-    private HexMap.DIRECTION getCityDir(Hex city, Hex h) {
-        Transform hexT = hexMap.getGOFromHex(h).transform;
-        Transform cityT = hexMap.getGOFromHex(city).transform;
+    private HexMap.DIRECTION GetCityDir(Hex city, Hex h) {
+        Transform hexT = hexMap.GetGOFromHex(h).transform;
+        Transform cityT = hexMap.GetGOFromHex(city).transform;
 
         float angle = Vector3.SignedAngle(hexT.right, hexT.position - cityT.position, hexT.up);
         if(angle < 0) {
@@ -365,7 +365,7 @@ public class UIController : MonoBehaviour
 
     }
 
-    private Button findButtonByName(string btnName, Button[] btns) {
+    private Button FindButtonByName(string btnName, Button[] btns) {
         foreach(Button b in btns) {
             if(b.name == btnName) {
                 return b;

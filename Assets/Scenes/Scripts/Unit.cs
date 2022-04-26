@@ -15,61 +15,61 @@ public class Unit : MapObject {
 
     Queue<Hex> hexPath;
 
-    override public void setHex(Hex newHex) {
+    override public void SetHex(Hex newHex) {
         if (this.hex != null) {
-            this.hex.removeUnit(this);
+            this.hex.RemoveUnit(this);
         }
 
-        base.setHex(newHex);
+        base.SetHex(newHex);
 
-        this.hex.addUnit(this);
+        this.hex.AddUnit(this);
     }
 
-    public Hex[] getHexPath() {
+    public Hex[] GetHexPath() {
         if(hexPath == null) {
             return null;
         }
         return this.hexPath.ToArray();
     }
 
-    public void setHexPath(Hex[] hexPath) {
+    public void SetHexPath(Hex[] hexPath) {
         if(hexPath == null) {
             return;
         }
         this.hexPath = new Queue<Hex>(hexPath);
     }
 
-    public bool move() {
+    public bool Move() {
         //pop first hex from queue (if present)
         if(hexPath == null || hexPath.Count == 0) {
             return false;
         }
 
         Hex newHex = hexPath.Dequeue();
-        setHex(newHex);
-        return canMoveAgain();
+        SetHex(newHex);
+        return CanMoveAgain();
     }
 
-    public bool canMoveAgain() {
-        return (movementRemaining > 0 && hexPath != null && hexPath.Count > 0 && movementRemaining >= hexPath.Peek().getMovementCost());
+    public bool CanMoveAgain() {
+        return (movementRemaining > 0 && hexPath != null && hexPath.Count > 0 && movementRemaining >= hexPath.Peek().GetMovementCost());
     }
 
-    public float getUnitSpeed() {
+    public float GetUnitSpeed() {
         return unitView.currentVelocity.magnitude;
     }
 
-    public float distFromNextHex() {
+    public float DistFromNextHex() {
         return Vector3.Distance(unitView.oldPos, unitView.newPos);
     }
 
-    public float movementCostToEnterHex(Hex hex) {
-        return hex.getMovementCost();
+    public float MovementCostToEnterHex(Hex hex) {
+        return hex.GetMovementCost();
     }
 
     //TODO: revisit this: might be necessary for perfect pathfinding -- not used currently
     // turn cost != movement cost
-    public float aggregateTurnsToEnterHex(Hex hex, float turnsToDate) {
-        float baseTurnsToEnterHex = movementCostToEnterHex(hex) / movement; //ex. entering forest is "1" turn
+    public float AggregateTurnsToEnterHex(Hex hex, float turnsToDate) {
+        float baseTurnsToEnterHex = MovementCostToEnterHex(hex) / movement; //ex. entering forest is "1" turn
 
         float turnsRemaining = movementRemaining / movement; //ex. 1/2 move pts => .5 turns left
 

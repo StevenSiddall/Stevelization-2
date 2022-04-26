@@ -14,7 +14,7 @@ public class CityNamePlateController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameObject.FindObjectOfType<HexMap>().onCityCreated += createCityNamePlate;
+        GameObject.FindObjectOfType<HexMap>().onCityCreated += CreateCityNamePlate;
         actionController = GameObject.FindObjectOfType<ActionController>();
         uiController = GameObject.FindObjectOfType<UIController>();
         hexMap = GameObject.FindObjectOfType<HexMap>();
@@ -26,12 +26,12 @@ public class CityNamePlateController : MonoBehaviour
         
     }
 
-    public void createCityNamePlate(City city, GameObject cityGO, Dictionary<City, GameObject> cityToGOMap, Dictionary<GameObject, City> goToCityMap) {
+    public void CreateCityNamePlate(City city, GameObject cityGO, Dictionary<City, GameObject> cityToGOMap, Dictionary<GameObject, City> goToCityMap) {
         GameObject nameGO = Instantiate(cityNamePlatePrefab, this.transform);
         MapObjectNamePlate namePlateGO = nameGO.GetComponent<MapObjectNamePlate>();
         namePlateGO.target = cityGO;
         namePlateGO.GetComponentInChildren<Text>().text = city.name;
-        nameGO.GetComponentInChildren<Button>().onClick.AddListener(delegate { actionController.selectCity(hexMap.getCityFromGO(cityGO)); });
-        uiController.mapCityToNameplate(city, namePlateGO);
+        nameGO.GetComponentInChildren<Button>().onClick.AddListener(delegate { actionController.SelectCity(hexMap.GetCityFromGO(cityGO)); });
+        uiController.MapCityToNameplate(city, namePlateGO);
     }
 }

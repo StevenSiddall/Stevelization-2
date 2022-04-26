@@ -10,7 +10,7 @@ public class HexPriorityQueue {
         this.data = new List<AStarTuple>();
     }
 
-    public void add(Hex hex, float fscore) {
+    public void Add(Hex hex, float fscore) {
         data.Add(new AStarTuple(hex, fscore));
         int ci = data.Count - 1;
 
@@ -28,7 +28,7 @@ public class HexPriorityQueue {
         }
     }
 
-    public Hex dequeue() {
+    public Hex Dequeue() {
         if(data.Count == 0) {
             Debug.LogError("Tried to dequeue from and empty priority queue");
             return null;
@@ -69,7 +69,7 @@ public class HexPriorityQueue {
         return data.Count;
     }
 
-    public bool contains(Hex hex) {
+    public bool Contains(Hex hex) {
         for(int i = 0; i < data.Count; i++) {
             if(data[i].hex == hex) {
                 return true;
