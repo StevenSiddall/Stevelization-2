@@ -45,7 +45,7 @@ public class HexMap : MonoBehaviour {
     private Dictionary<Hex, GameObject> hexToGOMap;
     private Dictionary<GameObject, Hex> goToHexMap;
 
-    //unit stuff
+    // Units and cities
     public GameObject unitFootsoldierPrefab;
     public GameObject cityPrefab;
 
@@ -56,16 +56,24 @@ public class HexMap : MonoBehaviour {
     private Dictionary<City, GameObject> cityToGOMap;
     private Dictionary<GameObject, City> goToCityMap;
 
+    // Zones
+    private Dictionary<Zone, GameObject> zoneToGOMap;
+    public GameObject agriculturePrefab;
+    public GameObject forestryPrefab;
+    public GameObject miningPrefab;
+    public GameObject townPrefab;
+    public GameObject militaryPrefab;
+    public GameObject harborPrefab;
+
     //event stuff
     public delegate void cityCreatedDelegate(City city, GameObject cityGO, Dictionary<City, GameObject> cityToGOMap, Dictionary<GameObject, City> goToCityMap);
     public event cityCreatedDelegate onCityCreated;
 
-    //database
-    public Database database;
+    public delegate void zoneCreatedDelegate(Zone zone, GameObject zoneGO, Dictionary<Zone, GameObject> zoneToGOMap);
+    public event zoneCreatedDelegate onZoneCreated;
 
     // Start is called before the first frame update
     void Start() {
-        database = FindObjectOfType<Database>();
         GenerateMap();
     }
 
@@ -306,5 +314,29 @@ public class HexMap : MonoBehaviour {
         if(onCityCreated != null) {
             onCityCreated(city, cityGO, cityToGOMap, goToCityMap);
         }
+    }
+
+    public bool SpawnZoneAt(Zone zone, City city, GameObject prefab, int q, int r) {
+        Hex zoneHex = GetHex(q, r);
+        GameObject zoneHexGO = hexToGOMap[zoneHex];
+
+        if(!zone.IsValidHex(zoneHex) || !city.AddZone(zone)) {
+            return false;
+        }
+
+        zone.SetHex(zoneHex);
+
+        GameObject zoneGO = Instantiate(prefab, zoneHexGO.transform.position, Quaternion.identity, zoneHexGO.transform);
+
+        if (zoneToGOMap == null) {
+            zoneToGOMap = new Dictionary<Zone, GameObject>();
+        }
+        zoneToGOMap[zone] = zoneGO;
+
+        if(onZoneCreated != null) {
+            onZoneCreated(zone, zoneGO, zoneToGOMap);
+        }
+
+        return true;
     }
 }

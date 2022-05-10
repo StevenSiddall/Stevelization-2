@@ -1,0 +1,93 @@
+{
+  "main": {
+    "id": "e7c34e18895b37a9",
+    "type": "split",
+    "children": [
+      {
+        "id": "901dc0ac54cdddd2",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "Stevelization.md",
+            "mode": "source"
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "27f532a769427e85",
+    "type": "split",
+    "children": [
+      {
+        "id": "49fa67d9a8b21282",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a53f7f53a20ccf85",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "3a5efe8175f46925",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "e30bb7f245c9d8d7",
+    "type": "split",
+    "children": [
+      {
+        "id": "9e201a76e667941b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "18fc1cabf898d38d",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Stevelization.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "active": "901dc0ac54cdddd2",
+  "lastOpenFiles": [
+    "Stevelization.md"
+  ]
+}

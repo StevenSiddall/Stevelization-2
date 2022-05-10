@@ -22,6 +22,8 @@ public class UIController : MonoBehaviour
     UnitInfoPanelBehavior unitInfoPanelBehavior;
     GameObject cityInfoPanel;
     CityInfoPanelBehavior cityInfoPanelBehavior;
+    GameObject zoneInfoPanel;
+    ZoneInfoPanelBehavior zoneInfoPanelBehavior;
 
     ActionController actionController;
     MouseController mouseController;
@@ -33,6 +35,7 @@ public class UIController : MonoBehaviour
     public GameObject borderLineContainer;
     public Dictionary<City, LineRenderer> borderLineRenderers;
     public Dictionary<City, MapObjectNamePlate> cityNamePlates;
+    public Dictionary<Zone, MapObjectNamePlate> zoneNamePlates;
 
     //useful constants for getting corner locations of a hex
     private readonly float r = Hex.RADIUS;
@@ -59,6 +62,8 @@ public class UIController : MonoBehaviour
         unitInfoPanel = unitInfoPanelBehavior.gameObject;
         cityInfoPanelBehavior = GameObject.Find("Canvas_GameUI").GetComponentInChildren<CityInfoPanelBehavior>();
         cityInfoPanel = cityInfoPanelBehavior.gameObject;
+        zoneInfoPanelBehavior = GameObject.Find("Canvas_GameUI").GetComponentInChildren<ZoneInfoPanelBehavior>();
+        zoneInfoPanel = zoneInfoPanelBehavior.gameObject;
         actionController = FindObjectOfType<ActionController>();
         mouseController = FindObjectOfType<MouseController>();
 
@@ -68,15 +73,16 @@ public class UIController : MonoBehaviour
 
         borderLineRenderers = new Dictionary<City, LineRenderer>();
         cityNamePlates = new Dictionary<City, MapObjectNamePlate>();
+        zoneNamePlates = new Dictionary<Zone, MapObjectNamePlate>();
 
         hexMap.onCityCreated += UpdateCityBorders;
 
         nextButton.onClick.AddListener(actionController.NextTurn);
         buildCityButton.onClick.AddListener(actionController.BuildCity);
-        UpdateSelection(null, null); //disable info panel by default
+        UpdateSelection(null, null, null); //disable info panel by default
     }
 
-    public void UpdateSelection(Unit unit, City city) {
+    public void UpdateSelection(Unit unit, City city, Zone zone) {
         if(unit != null) {
             unitInfoPanel.SetActive(true);
             unitInfoPanelBehavior.UpdateSelection(unit);
@@ -86,9 +92,16 @@ public class UIController : MonoBehaviour
 
         if(city != null) {
             cityInfoPanel.SetActive(true);
-            cityInfoPanelBehavior.updateSelection(city);
+            cityInfoPanelBehavior.UpdateSelection(city);
         } else {
             cityInfoPanel.SetActive(false);
+        }
+
+        if(zone != null) {
+            zoneInfoPanel.SetActive(true);
+            zoneInfoPanelBehavior.UpdateSelection(zone);
+        } else {
+            zoneInfoPanel.SetActive(false);
         }
     }
 
@@ -303,6 +316,10 @@ public class UIController : MonoBehaviour
 
     public void MapCityToNameplate(City city, MapObjectNamePlate np) {
         cityNamePlates[city] = np;
+    }
+
+    public void MapZoneToNameplate(Zone zone, MapObjectNamePlate np) {
+        zoneNamePlates[zone] = np;
     }
 
     //takes a hex and a direction and returns the two vectors of the positions of the

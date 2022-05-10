@@ -16,7 +16,7 @@ public class CityInfoPanelBehavior : MonoBehaviour
         print("start called");
     }
 
-    public void updateSelection(City city) {
+    public void UpdateSelection(City city) {
         print("update selection called");
         if(city != null) {
             nameInput.text = city.name;

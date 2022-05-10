@@ -16,7 +16,7 @@ public class Hex {
     public static readonly float VERT_SPACING = HEIGHT * 0.75f;
     public static readonly float HORIZ_SPACING = WIDTH;
 
-    //unit movement stuff
+    // Unit movement stuff
     public static readonly float BASE_MOVECOST = 1f; //cost of entering an unimproved flat tile
     public static readonly float HILL_MOVECOST = 2f; //cost of entering an unimproved hill tile
     public static readonly float FOREST_MOVECOST = 2f; //cost of entering an unimproved forest tile
@@ -24,7 +24,7 @@ public class Hex {
     public static readonly float MOUNTAIN_MOVECOST = Mathf.Infinity; //cost of entering an unimproved mountain tile
     public static readonly float WATER_MOVECOST = Mathf.Infinity; //cost of entering an unimproved water tile
 
-    //terrain stuff
+    // Terrain stuff
     public float elevation;
     public float moisture;
 
@@ -36,7 +36,7 @@ public class Hex {
     private ELEVATION_TYPE elevationType;
     private FEATURE_TYPE featureType;
 
-    //hexmap stuff
+    // Hexmap stuff
     public readonly int Q;
     public readonly int R;
     public readonly int S;
@@ -46,13 +46,10 @@ public class Hex {
     HashSet<Unit> units;
     public City city { get; protected set; }
 
-    //specialization stuff
-    public enum SPECIALIZATION_TYPE { FARMLAND, MINING, FORESTRY, TOWN, MILITARY }
-    public enum OUTPUT_TYPE { FOOD, RAW_MATERIALS }
-
-    private float[] baseOutputs;
-
     private float movementCost = Mathf.Infinity;
+
+    // Zone stuff
+    private Zone zone;
 
     public Hex(HexMap hexmap, int q, int r) {
         this.hexMap = hexmap;
@@ -211,6 +208,21 @@ public class Hex {
 
     public FEATURE_TYPE GetFeatureType() {
         return featureType;
+    }
+
+    public Zone.ZONE_TYPE GetZoneType() {
+        if (zone == null) {
+            return Zone.ZONE_TYPE.NONE;
+        }
+        return zone.GetZoneType();
+    }
+
+    public Zone GetZone() {
+        return zone;
+    }
+
+    public void SetZone(Zone newZone) {
+        zone = newZone;
     }
 
     //updates this tile's movement cost based on its type and features

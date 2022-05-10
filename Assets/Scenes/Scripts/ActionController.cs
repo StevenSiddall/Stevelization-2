@@ -10,6 +10,7 @@ public class ActionController : MonoBehaviour
     HexMap hexMap;
     Unit selectedUnit;
     City selectedCity;
+    Zone selectedZone;
 
     UIController uiController;
     MouseController mouseController;
@@ -29,7 +30,7 @@ public class ActionController : MonoBehaviour
         HashSet<Unit> units = hexMap.GetUnits();
         MoveUnits(units);
         ReplenishUnitMovement(units);
-        uiController.UpdateSelection(selectedUnit, selectedCity);
+        uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
     }
 
     public void ReplenishUnitMovement(HashSet<Unit> units) {
@@ -58,7 +59,7 @@ public class ActionController : MonoBehaviour
                 yield return null; //wait for animation to get close to finishing
             }
             unit.movementRemaining -= unit.hex.GetMovementCost();
-            uiController.UpdateSelection(selectedUnit, selectedCity);
+            uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
             animationIsPlaying = false;
         }
     }
@@ -66,13 +67,22 @@ public class ActionController : MonoBehaviour
     public void SelectUnit(Unit unit) {
         selectedUnit = unit;
         selectedCity = null;
-        uiController.UpdateSelection(selectedUnit, selectedCity);
+        selectedZone = null;
+        uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
     }
 
     public void SelectCity(City city) {
         selectedCity = city;
         selectedUnit = null;
-        uiController.UpdateSelection(selectedUnit, selectedCity);
+        selectedZone = null;
+        uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
+    }
+
+    public void SelectZone(Zone zone) {
+        selectedZone = zone;
+        selectedCity = null;
+        selectedUnit = null;
+        uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
     }
 
     public void Select(Hex hexUnderMouse) {
@@ -116,7 +126,7 @@ public class ActionController : MonoBehaviour
     public void RenameCity(City city, string newName) {
         if(city != null) {
             city.name = newName;
-            uiController.UpdateSelection(this.selectedUnit, this.selectedCity);
+            uiController.UpdateSelection(this.selectedUnit, this.selectedCity, this.selectedZone);
         }
     }
 
@@ -135,6 +145,8 @@ public class ActionController : MonoBehaviour
 
         City city = new City();
         hexMap.SpawnCityAt(city, hexMap.cityPrefab, selectedUnit.hex.Q, selectedUnit.hex.R);
-        uiController.UpdateSelection(selectedUnit, selectedCity);
+        uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
+
+        hexMap.SpawnZoneAt(new TownZone(hexMap.GetHex(selectedUnit.hex.Q + 1, selectedUnit.hex.R)), city, hexMap.militaryPrefab, selectedUnit.hex.Q + 1, selectedUnit.hex.R);
     }
 }
