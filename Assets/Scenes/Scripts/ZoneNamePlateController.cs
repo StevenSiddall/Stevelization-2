@@ -29,6 +29,11 @@ public class ZoneNamePlateController : MonoBehaviour
     }
 
     public void CreateZoneNamePlate(Zone zone, GameObject zoneGO, Dictionary<Zone, GameObject> zoneToGOMap) {
+        // Don't want zone nameplates for city centers -- just a city nameplate
+        if(zone.GetZoneType() == Zone.ZONE_TYPE.CITY_CENTER) {
+            return;
+        }
+        
         GameObject nameGO = Instantiate(zoneNamePlatePrefab, this.transform);
         MapObjectNamePlate namePlateGO = nameGO.GetComponent<MapObjectNamePlate>();
         namePlateGO.target = zoneGO;

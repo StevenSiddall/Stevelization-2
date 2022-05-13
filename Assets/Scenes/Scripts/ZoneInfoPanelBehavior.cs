@@ -19,16 +19,20 @@ public class ZoneInfoPanelBehavior : MonoBehaviour
         
     }
 
-    // Update is called once per frame
     public void UpdateSelection(Zone zone)
     {
+        if(zone == null) {
+            return;
+        }
+
         zoneName.text = zone.name;
-        popText.text = "Pop: " + zone.GetPopulation() + "/" + zone.GetPopCapByDevLevel()[zone.GetDevLevel()];
-        upkeepText.text = "Upkeep: " + Math.Round(zone.GetUpkeep());
+        popText.text = "Pop: " + zone.GetPopulation() + "/" + zone.GetPopCap();
+        upkeepText.text = "Upkeep: " + SpriteText.RESOURCE_SPRITE[(int) Resource.RESOURCE_TYPE.MONEY] + " " + Math.Round(zone.GetUpkeep());
         devLevelText.text = "Dev. Level: " + zone.GetDevLevel();
 
-        for(int i = 0; i < Enum.GetNames(typeof(Resource.RESOURCE_TYPE)).Length; i++) {
-            resourceText[i].text = Math.Round(zone.GetResourceOutputs()[i]).ToString();
+        float[] outputs = zone.GetResourceOutputs();
+        for(int i = 0; i < outputs.Length; i++) {
+            resourceText[i].text = SpriteText.RESOURCE_SPRITE[i] + " " + Math.Round(outputs[i]).ToString();
         }
     }
 }

@@ -47,7 +47,6 @@ public class HexMap : MonoBehaviour {
 
     // Units and cities
     public GameObject unitFootsoldierPrefab;
-    public GameObject cityPrefab;
 
     private HashSet<Unit> units;
     private Dictionary<Unit, GameObject> unitToGOMap;
@@ -58,12 +57,7 @@ public class HexMap : MonoBehaviour {
 
     // Zones
     private Dictionary<Zone, GameObject> zoneToGOMap;
-    public GameObject agriculturePrefab;
-    public GameObject forestryPrefab;
-    public GameObject miningPrefab;
-    public GameObject townPrefab;
-    public GameObject militaryPrefab;
-    public GameObject harborPrefab;
+    public GameObject [] zonePrefabs;
 
     //event stuff
     public delegate void cityCreatedDelegate(City city, GameObject cityGO, Dictionary<City, GameObject> cityToGOMap, Dictionary<GameObject, City> goToCityMap);
@@ -320,13 +314,21 @@ public class HexMap : MonoBehaviour {
         Hex zoneHex = GetHex(q, r);
         GameObject zoneHexGO = hexToGOMap[zoneHex];
 
+        // TODO: move this to action controller once we have a BuildZone function
         if(!zone.IsValidHex(zoneHex) || !city.AddZone(zone)) {
             return false;
         }
 
         zone.SetHex(zoneHex);
 
-        GameObject zoneGO = Instantiate(prefab, zoneHexGO.transform.position, Quaternion.identity, zoneHexGO.transform);
+        GameObject zoneGO = null;
+
+        // City center zones have GameObjects already
+        if(zone.GetZoneType() == Zone.ZONE_TYPE.CITY_CENTER) {
+            zoneGO = cityToGOMap[city];
+        } else {
+            zoneGO = Instantiate(prefab, zoneHexGO.transform.position, Quaternion.identity, zoneHexGO.transform);
+        }
 
         if (zoneToGOMap == null) {
             zoneToGOMap = new Dictionary<Zone, GameObject>();

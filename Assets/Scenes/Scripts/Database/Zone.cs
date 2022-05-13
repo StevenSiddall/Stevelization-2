@@ -25,6 +25,7 @@ public abstract class Zone : MapObject {
 
     public Zone(Hex newHex) {
         this.hex = newHex;
+        newHex.SetZone(this);
         population = 1;
         UpdateResourceOutputs();
     }
@@ -50,23 +51,21 @@ public abstract class Zone : MapObject {
     }
 
     public float GetUpkeep() {
+        UpdateUpkeep();
         return upkeep;
     }
 
-    public void SetUpkeep(float newUpkeep) {
-        upkeep = newUpkeep;
-    }
-
     public float[] GetResourceOutputs() {
+        UpdateResourceOutputs();
         return resourceOutputs;
-    }
-
-    public void SetResourceOutput(Resource.RESOURCE_TYPE type, float value) {
-        resourceOutputs[(int) type] = value;
     }
 
     public bool IsValidHex() {
         return IsValidHex(this.hex);
+    }
+
+    public int GetPopCap() {
+        return GetPopCapByDevLevel()[developmentLevel];
     }
 
     public abstract int[] GetPopCapByDevLevel();

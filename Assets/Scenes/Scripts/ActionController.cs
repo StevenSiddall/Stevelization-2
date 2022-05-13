@@ -74,7 +74,7 @@ public class ActionController : MonoBehaviour
     public void SelectCity(City city) {
         selectedCity = city;
         selectedUnit = null;
-        selectedZone = null;
+        selectedZone = city.GetZones(Zone.ZONE_TYPE.CITY_CENTER)[0];
         uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
     }
 
@@ -144,9 +144,15 @@ public class ActionController : MonoBehaviour
         }
 
         City city = new City();
-        hexMap.SpawnCityAt(city, hexMap.cityPrefab, selectedUnit.hex.Q, selectedUnit.hex.R);
+        hexMap.SpawnCityAt(city, hexMap.zonePrefabs[(int) Zone.ZONE_TYPE.CITY_CENTER], selectedUnit.hex.Q, selectedUnit.hex.R);
+        hexMap.SpawnZoneAt(new CityCenterZone(hexMap.GetHex(selectedUnit.hex.Q, selectedUnit.hex.R)),
+                                              city,
+                                              null,
+                                              selectedUnit.hex.Q,
+                                              selectedUnit.hex.R);
+        
         uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
 
-        hexMap.SpawnZoneAt(new TownZone(hexMap.GetHex(selectedUnit.hex.Q + 1, selectedUnit.hex.R)), city, hexMap.militaryPrefab, selectedUnit.hex.Q + 1, selectedUnit.hex.R);
+        hexMap.SpawnZoneAt(new AgricultureZone(hexMap.GetHex(selectedUnit.hex.Q + 1, selectedUnit.hex.R)), city, hexMap.zonePrefabs[1], selectedUnit.hex.Q + 1, selectedUnit.hex.R);
     }
 }

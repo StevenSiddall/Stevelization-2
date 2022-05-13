@@ -16,9 +16,9 @@ public class City : MapObject {
 
     // City Stats
     private int totalPopulation;
-
-    private HashSet<Zone> zones;
-
+    private float totalUpkeep;
+    private List<Zone> zones;
+    private List<Hex> hexes;
     private int[] maxNumZones = {1,
                                 BASE_MAX_AGRICULTURE_ZONES,
                                 BASE_MAX_FORESTRY_ZONES,
@@ -29,17 +29,45 @@ public class City : MapObject {
 
     // Combat
     private float hitPoints;
-    private float fortification;
-
-    // Territory
-    private List<Hex> hexes;
-
+    private float defensiveStrength;
 
     public City() {
         name = "a city";
         hitPoints = 100f;
+        defensiveStrength = 1f;
         hexes = new List<Hex>();
-        zones = new HashSet<Zone>();
+        zones = new List<Zone>();
+    }
+
+    public void UpdateTotalUpkeep() {
+        totalUpkeep = 0;
+
+        foreach(Zone z in zones) {
+            totalUpkeep += z.GetUpkeep();
+        }
+    }
+
+    public void UpdateTotalPopulation() {
+        totalPopulation = 0;
+
+        foreach(Zone z in zones) {
+            totalPopulation += z.GetPopulation();
+        }
+    }
+
+    public void UpdateTotalYields() {
+        // Reset yields to 0
+        for(int i = 0; i < totalYields.Length; i++) {
+            totalYields[i] = 0;
+        }
+
+        // Total outputs of each zone
+        foreach(Zone z in zones) {
+            float[] outputs = z.GetResourceOutputs();
+            for(int i = 0; i < outputs.Length; i++){
+                totalYields[i] += outputs[i];
+            }
+        }
     }
 
     public override void SetHex(Hex newHex) {
@@ -72,6 +100,47 @@ public class City : MapObject {
 
     public Hex[] GetHexes() {
         return hexes.ToArray();
+    }
+
+    public int[] GetMaxNumZones() {
+        return maxNumZones;
+    }
+
+    public float GetDefensiveStrength() {
+        return defensiveStrength;
+    }
+
+    public float GetTotalUpkeep() {
+        UpdateTotalUpkeep();
+        return totalUpkeep;
+    }
+
+    public int GetTotalPopulation() {
+        UpdateTotalPopulation();
+        return totalPopulation;
+    }
+
+    public float[] GetTotalYields() {
+        UpdateTotalYields();
+        return totalYields;
+    }
+
+    public int GetTotalMaxPopulation() {
+        int maxpop = 0;
+        foreach(Zone z in zones) {
+            maxpop += z.GetPopCap();
+        }
+        return maxpop;
+    }
+
+    public Zone[] GetZones(Zone.ZONE_TYPE type) {
+        List<Zone> rtnZones = new List<Zone>();
+        foreach(Zone z in zones) {
+            if(z.GetZoneType() == type) {
+                rtnZones.Add(z);
+            }
+        }
+        return rtnZones.ToArray();
     }
 
     public int[] GetNumZones() {
