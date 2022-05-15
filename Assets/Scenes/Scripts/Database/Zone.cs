@@ -34,6 +34,18 @@ public abstract class Zone : MapObject {
         return zoneType;
     }
 
+    public Hex GetHex() {
+        return hex;
+    }
+
+    public new bool SetHex(Hex newHex) {
+        if(!IsValidHex(newHex)) {
+            return false;
+        }
+        hex = newHex;
+        return true;
+    }
+
     public int GetPopulation() {
         return population;
     }
@@ -76,7 +88,6 @@ public abstract class Zone : MapObject {
                               Hex.TERRAIN_TYPE[] allowedTerrainTypes,
                               Hex.ELEVATION_TYPE[] allowedElevationTypes,
                               Hex.FEATURE_TYPE[] allowedFeatureTypes) {
-        Debug.Log("hex: " + hex);
         return (Array.IndexOf(allowedTerrainTypes, newHex.GetTerrainType()) != -1) &&
                (Array.IndexOf(allowedElevationTypes, newHex.GetElevationType()) != -1) &&
                (Array.IndexOf(allowedFeatureTypes, newHex.GetFeatureType()) != -1);

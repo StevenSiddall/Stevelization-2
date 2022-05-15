@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ZoneNamePlateController : MonoBehaviour
 {
@@ -9,8 +10,6 @@ public class ZoneNamePlateController : MonoBehaviour
     public ActionController actionController;
     public UIController uIController;
     public HexMap hexMap;
-
-    public Sprite[] zoneSprites;
 
 
     // Start is called before the first frame update
@@ -33,12 +32,11 @@ public class ZoneNamePlateController : MonoBehaviour
         if(zone.GetZoneType() == Zone.ZONE_TYPE.CITY_CENTER) {
             return;
         }
-        
+
         GameObject nameGO = Instantiate(zoneNamePlatePrefab, this.transform);
         MapObjectNamePlate namePlateGO = nameGO.GetComponent<MapObjectNamePlate>();
         namePlateGO.target = zoneGO;
-        namePlateGO.GetComponentInChildren<Text>().text = zone.GetPopulation().ToString();
-        namePlateGO.GetComponentsInChildren<Image>()[1].sprite = zoneSprites[(int) zone.GetZoneType()];
+        namePlateGO.GetComponentInChildren<TextMeshProUGUI>().text = SpriteText.ZONE_SPRITE[(int) zone.GetZoneType()] + " " + zone.GetPopulation().ToString();
         nameGO.GetComponentInChildren<Button>().onClick.AddListener(delegate { actionController.SelectZone(zone); });
         uIController.MapZoneToNameplate(zone, namePlateGO);
     }

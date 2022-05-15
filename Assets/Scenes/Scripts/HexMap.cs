@@ -313,14 +313,6 @@ public class HexMap : MonoBehaviour {
     public bool SpawnZoneAt(Zone zone, City city, GameObject prefab, int q, int r) {
         Hex zoneHex = GetHex(q, r);
         GameObject zoneHexGO = hexToGOMap[zoneHex];
-
-        // TODO: move this to action controller once we have a BuildZone function
-        if(!zone.IsValidHex(zoneHex) || !city.AddZone(zone)) {
-            return false;
-        }
-
-        zone.SetHex(zoneHex);
-
         GameObject zoneGO = null;
 
         // City center zones have GameObjects already

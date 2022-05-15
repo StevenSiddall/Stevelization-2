@@ -1,11 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 //TODO: split this into turn controller stuff and mid-turn stuff if it gets too crowded
 public class ActionController : MonoBehaviour
 {
     public bool animationIsPlaying = false;
+
+    private bool zonePlacementMode = false;
+    private Zone ghostZone;
+    private GameObject ghostZonePrefab;
+    private City ghostZoneCity;
 
     HexMap hexMap;
     Unit selectedUnit;
@@ -20,6 +26,13 @@ public class ActionController : MonoBehaviour
         hexMap = FindObjectOfType<HexMap>();
         uiController = FindObjectOfType<UIController>();
         mouseController = FindObjectOfType<MouseController>();
+    }
+
+    void Update() {
+        if(zonePlacementMode) {
+            Debug.Log("Display ghost zone");
+            uiController.DisplayGhostZone(ghostZone, ghostZoneCity);
+        }
     }
 
     public void NextTurn() {
@@ -93,6 +106,16 @@ public class ActionController : MonoBehaviour
         }
 
         Debug.Log("Hex selected");
+
+        if(zonePlacementMode) {
+            if(IsValidZonePlacement(ghostZone, hexUnderMouse)) {
+                BuildZone(hexUnderMouse.Q, hexUnderMouse.R);
+            }
+
+            ExitZonePlacementMode();
+            return;
+        }
+
         Unit[] units = hexUnderMouse.GetUnitArray();
         if (units == null || units.Length == 0) {
             //no unit present -- deselect
@@ -145,14 +168,74 @@ public class ActionController : MonoBehaviour
 
         City city = new City();
         hexMap.SpawnCityAt(city, hexMap.zonePrefabs[(int) Zone.ZONE_TYPE.CITY_CENTER], selectedUnit.hex.Q, selectedUnit.hex.R);
-        hexMap.SpawnZoneAt(new CityCenterZone(hexMap.GetHex(selectedUnit.hex.Q, selectedUnit.hex.R)),
-                                              city,
-                                              null,
-                                              selectedUnit.hex.Q,
-                                              selectedUnit.hex.R);
+        
+        Hex cityCenterHex = hexMap.GetHex(selectedUnit.hex.Q, selectedUnit.hex.R);
+        Zone cityCenterZone = new CityCenterZone(cityCenterHex);
+        hexMap.SpawnZoneAt(cityCenterZone,
+                            city,
+                            null,
+                            selectedUnit.hex.Q,
+                            selectedUnit.hex.R);
+        city.AddZone(cityCenterZone);
         
         uiController.UpdateSelection(selectedUnit, selectedCity, selectedZone);
+    }
 
-        hexMap.SpawnZoneAt(new AgricultureZone(hexMap.GetHex(selectedUnit.hex.Q + 1, selectedUnit.hex.R)), city, hexMap.zonePrefabs[1], selectedUnit.hex.Q + 1, selectedUnit.hex.R);
+    public void BuildZone(int q, int r) {
+        Hex zoneHex = hexMap.GetHex(q, r);
+
+        if(!ghostZone.SetHex(zoneHex) || !selectedCity.AddZone(ghostZone)) {
+            return;
+        }
+
+        ghostZone.SetHex(zoneHex);
+
+        hexMap.SpawnZoneAt(ghostZone, selectedCity, hexMap.zonePrefabs[(int) ghostZone.GetZoneType()], q, r);
+    }
+
+    public void EnterZonePlacementMode(Zone.ZONE_TYPE type) {
+        zonePlacementMode = true;
+        switch(type) {
+            case Zone.ZONE_TYPE.AGRICULTURE:
+                ghostZone = new AgricultureZone();
+                break;
+            case Zone.ZONE_TYPE.FORESTRY:
+                ghostZone = new ForestryZone();
+                break;
+            case Zone.ZONE_TYPE.MINING:
+                ghostZone = new MiningZone();
+                break;
+            case Zone.ZONE_TYPE.TOWN:
+                ghostZone = new TownZone();
+                break;
+            case Zone.ZONE_TYPE.MILITARY:
+                ghostZone = new MilitaryZone();
+                break;
+            case Zone.ZONE_TYPE.HARBOR:
+                ghostZone = new HarborZone();
+                break;
+            default: // Unsupported zone type
+                zonePlacementMode = false;
+                Debug.Log("EnterZonePlacementMode failed: Invalid zone type: " + type);
+                return;
+        }
+
+        ghostZonePrefab = hexMap.zonePrefabs[(int) type];
+        ghostZoneCity = selectedCity;
+        uiController.SetGhostZoneType(ghostZonePrefab, ghostZoneCity);
+    }
+
+    public void ExitZonePlacementMode() {
+        zonePlacementMode = false;
+        ghostZone = null;
+        ghostZoneCity = null;
+        ghostZonePrefab = null;
+        uiController.SetGhostZoneType(null, null);
+    }
+
+    public bool IsValidZonePlacement(Zone zone, Hex hex) {
+        return ghostZone.IsValidHex(hex) &&
+                hex.GetZone() == null &&
+                Array.Exists(selectedCity.GetHexes(), h => h == hex);
     }
 }

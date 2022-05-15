@@ -84,6 +84,8 @@ public class MouseController : MonoBehaviour
         } else if (actionController.GetSelectedUnit() != null && Input.GetMouseButton(BUTTON_RIGHTMOUSE)) {
             //right clicked somewhere -- tell action controller
             update_CurrentFunc = UpdateUnitMovement;
+        } else if (Input.GetMouseButton(BUTTON_RIGHTMOUSE)) {
+            actionController.ExitZonePlacementMode();
         }
     }
 
@@ -165,6 +167,14 @@ public class MouseController : MonoBehaviour
         }
         float rayLength = mouseRay.origin.y / mouseRay.direction.y;
         this.lastMouseGroundPlanePos = mouseRay.origin - (mouseRay.direction * rayLength);
+    }
+
+    public Hex GetHexUnderMouse() {
+        return hexUnderMouse;
+    }
+
+    public Hex GetLastHexUnderMouse() {
+        return lastHexUnderMouse;
     }
 
     private Vector3 MouseToGroundPlane(Vector3 mousePos) {

@@ -43,6 +43,10 @@ public class UIController : MonoBehaviour
     private readonly float z = Hex.RADIUS / 2;
     private readonly float y = .01f;
 
+    GameObject ghostZoneGO;
+    public Material validMat;
+    public Material invalidMat;
+
     //a blob represents a group of contiguous tiles from one or more of a player's cities
     private struct Blob {
         public City city { get; }
@@ -320,6 +324,39 @@ public class UIController : MonoBehaviour
 
     public void MapZoneToNameplate(Zone zone, MapObjectNamePlate np) {
         zoneNamePlates[zone] = np;
+    }
+
+    public void DisplayGhostZone(Zone ghostZone, City city) {
+        if(ghostZone == null) {
+            return;
+        }
+
+        if(mouseController.GetHexUnderMouse() != null) {
+            GameObject hexUnderMouseGO = hexMap.GetGOFromHex(mouseController.GetLastHexUnderMouse());
+            ghostZoneGO.transform.position = hexUnderMouseGO.transform.position;
+            if(actionController.IsValidZonePlacement(ghostZone, mouseController.GetHexUnderMouse())) {
+                Debug.Log("Set valid mat");
+                SetAllChildMaterials(ghostZoneGO, validMat);
+            } else {
+                SetAllChildMaterials(ghostZoneGO, invalidMat);
+            }            
+        }
+    }
+
+    public void SetGhostZoneType(GameObject zonePrefab, City ghostZoneCity) {
+        if(zonePrefab == null) {
+            Destroy(ghostZoneGO);
+            return;
+        }
+        GameObject hexGO = hexMap.GetGOFromHex(ghostZoneCity.GetZones(Zone.ZONE_TYPE.CITY_CENTER)[0].GetHex());
+        ghostZoneGO = Instantiate(zonePrefab, hexGO.transform.position, Quaternion.identity, hexGO.transform);
+    }
+
+    private void SetAllChildMaterials(GameObject go, Material mat) {
+        Transform child = go.transform.GetChild(0);
+        for(int i = 0; i < child.transform.childCount; i++) {
+            child.GetChild(i).GetComponent<Renderer>().material = mat;
+        }
     }
 
     //takes a hex and a direction and returns the two vectors of the positions of the
